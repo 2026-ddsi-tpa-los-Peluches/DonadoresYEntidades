@@ -1,11 +1,12 @@
 package ar.edu.utn.dds.k3003.repositories;
 
 import ar.edu.utn.dds.k3003.model.Donador;
+import lombok.val;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import lombok.val;
 
 public class InMemoryDonadoresRepo implements DonadoresRepository {
 
@@ -23,11 +24,15 @@ public class InMemoryDonadoresRepo implements DonadoresRepository {
 
   @Override
   public Donador save(Donador donador) {
-    Donador donadorConID = donador;
-    donadorConID.setId(String.valueOf(idSecuencial.getAndIncrement()));
-
-    this.donadores.add(donadorConID);
-    return this.findById(donadorConID.getId()).get();
+    if (donador.getId() == null) {
+      donador.setId("donador" + idSecuencial.getAndIncrement());
+    }
+    this.donadores.add(donador);
+    return this.findById(donador.getId()).get();
+  }
+  @Override
+  public List<Donador> findAll() {
+    return this.donadores;
   }
 
   @Override
