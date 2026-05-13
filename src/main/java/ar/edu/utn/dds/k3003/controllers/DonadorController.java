@@ -2,13 +2,17 @@ package ar.edu.utn.dds.k3003.controllers;
 
 import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.DonadorStatsDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EstadoDonadorEnum;
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.CategoriaDonadorEnum;
 import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +71,39 @@ public class DonadorController {
     return ResponseEntity.status(HttpStatus.OK).body(this.fachada.modificarEstado(id,EstadoDonadorEnum.valueOf(request.get("estado"))));
   }
 
+  @RequestMapping(method = RequestMethod.PATCH, value = "/{id}/categoria")
+  public ResponseEntity<DonadorDTO> cambiarCategoria(@PathVariable String id, @RequestBody Map<String, String> request ) {
+
+    if (!request.containsKey("categoria") || Arrays.stream(CategoriaDonadorEnum.values())
+            .noneMatch(e -> e.name().equals(request.get("categoria"))))
+    {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(this.fachada.modifcarCategoria(id,request.get("categoria")));
+  }
   // Opcion 2 utilizando @GetMapping
 
+  @RequestMapping(method = RequestMethod.GET, value = "/{id}/quejas")
+  public ResponseEntity<List<QuejaDTO>> getQuejas(@PathVariable String id) {
+    List<QuejaDTO> quejas = this.fachada.obtenerQuejasDe(id);
+    return ResponseEntity.status(HttpStatus.OK).body(quejas);
+  }
 
+  @RequestMapping(method = RequestMethod.POST, value = "/{donadorID}/quejas")
+  public ResponseEntity<QuejaDTO> agregarQueja(@PathVariable String donadorID, @RequestBody Map<String, String> request) {
+    if (!request.containsKey("donacionID") || !request.containsKey("descripcion"))
+    {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }else{
+      QuejaDTO nuevaQueja = new QuejaDTO(null,request.get("donacionID"),donadorID, LocalDate.now(),request.get("descripcion"));
+      return ResponseEntity.status(HttpStatus.CREATED).body(this.fachada.agregarQueja(nuevaQueja));
+    }
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value= "/{id}/estadisticas")
+  public ResponseEntity<DonadorStatsDTO> getEstadisticas(@PathVariable String id) {
+    return ResponseEntity.status(HttpStatus.OK).body(this.fachada.estadisticasDonador(id));
+  }
 
   //@GetMapping
   //public ResponseEntity<DonadorDTO> getDonadorByID(@RequestParam String donadorID) {

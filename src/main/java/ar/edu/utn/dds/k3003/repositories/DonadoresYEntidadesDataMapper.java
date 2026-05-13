@@ -70,13 +70,22 @@ public class DonadoresYEntidadesDataMapper {
     }
 
     public NecesidadMaterial toNecesidadMaterial(NecesidadMaterialDTO necesidadMaterialDTO) {
-        return new NecesidadExtraordinaria(
-                necesidadMaterialDTO.entidadID(),
-                necesidadMaterialDTO.nivelDeUrgencia(),
-                necesidadMaterialDTO.descripcion(),
-                necesidadMaterialDTO.productoSolicitadoID(),
-                necesidadMaterialDTO.cantidadObjetivo()
-        );
+        return switch (necesidadMaterialDTO.tipo()) {
+            case EXTRAORDINARIA -> new NecesidadExtraordinaria(
+                    necesidadMaterialDTO.entidadID(),
+                    necesidadMaterialDTO.nivelDeUrgencia(),
+                    necesidadMaterialDTO.descripcion(),
+                    necesidadMaterialDTO.productoSolicitadoID(),
+                    necesidadMaterialDTO.cantidadObjetivo()
+            );
+            case RECURRENTE -> new NecesidadRecurrente(
+                    necesidadMaterialDTO.entidadID(),
+                    necesidadMaterialDTO.nivelDeUrgencia(),
+                    necesidadMaterialDTO.descripcion(),
+                    necesidadMaterialDTO.productoSolicitadoID(),
+                    necesidadMaterialDTO.cantidadObjetivo()
+            );
+        };
     }
 
     public QuejaDTO toQuejaDTO(Queja queja) {

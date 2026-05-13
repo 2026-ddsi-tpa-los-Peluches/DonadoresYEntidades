@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/necesidades")
@@ -26,7 +27,7 @@ public class NecesidadController {
   public ResponseEntity<NecesidadMaterialDTO> postNecesidad(@RequestBody NecesidadMaterialDTO necesidadMaterialDTO) {
     try{
 
-    NecesidadMaterialDTO necesidadAgregada = fachada.registrarNecesidad(necesidadMaterialDTO);
+    NecesidadMaterialDTO necesidadAgregada = this.fachada.registrarNecesidad(necesidadMaterialDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(necesidadAgregada);
     }catch(Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -38,11 +39,16 @@ public class NecesidadController {
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<List<NecesidadMaterialDTO>> getNecesidades(@RequestParam String productoID) {
     try {
-      List<NecesidadMaterialDTO> necesidades = fachada.obtenerNecesidadesInsatisfechasDe(productoID);
+      List<NecesidadMaterialDTO> necesidades = this.fachada.obtenerNecesidadesInsatisfechasDe(productoID);
       return ResponseEntity.status(HttpStatus.OK).body(necesidades);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
+  }
+
+  @RequestMapping(method = RequestMethod.POST, value = "/{necesidadID}/satisfaccion")
+  public ResponseEntity<NecesidadMaterialDTO> satisfacerNecesidad(@PathVariable String necesidadID, @RequestBody Map<String, Integer> request) {
+    return ResponseEntity.status(HttpStatus.OK).body(this.fachada.satisfacerNecesidad(necesidadID,request.get("cantidad")));
   }
 
 

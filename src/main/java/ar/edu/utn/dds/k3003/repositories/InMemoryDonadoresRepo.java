@@ -24,9 +24,18 @@ public class InMemoryDonadoresRepo implements DonadoresRepository {
 
   @Override
   public Donador save(Donador donador) {
-    if (donador.getId() == null) {
-      donador.setId("donador" + idSecuencial.getAndIncrement());
+    if (donador.getId() != null) {
+      throw new IllegalArgumentException("Donador no debe tener id antes de al guardarse");
     }
+    donador.setId("donador" + idSecuencial.getAndIncrement());
+    this.donadores.add(donador);
+    return this.findById(donador.getId()).get();
+  }
+  public Donador update(Donador donador) {
+    if (donador.getId() == null) {
+      throw new IllegalArgumentException("donadorID no puede ser nulo.");
+    }
+    this.donadores.removeIf(d -> d.getId().equals(donador.getId()));
     this.donadores.add(donador);
     return this.findById(donador.getId()).get();
   }

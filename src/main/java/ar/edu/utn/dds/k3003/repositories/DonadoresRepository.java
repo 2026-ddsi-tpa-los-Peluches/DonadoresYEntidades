@@ -9,7 +9,7 @@ public interface DonadoresRepository {
   Optional<Donador> findById(String id);
 
   Donador save(Donador donador);
-
+  Donador update(Donador donador);
   List<Donador> findAll();
   Donador deleteById(String id);
 }

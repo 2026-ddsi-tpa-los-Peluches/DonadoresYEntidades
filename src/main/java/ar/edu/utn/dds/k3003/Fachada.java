@@ -81,8 +81,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
         val donadorFinal = donadorOptional.get();
         donadorFinal.setEstado(estado);
 
-        this.donadoresRepository.deleteById(donadorID);
-        this.donadoresRepository.save(donadorFinal);
+        //this.donadoresRepository.deleteById(donadorID);
+        this.donadoresRepository.update(donadorFinal); //antes habia save
 
         return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
     }
@@ -100,8 +100,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
         val donadorFinal = donadorOptional.get();
         donadorFinal.setCategoria(categoria);
 
-        this.donadoresRepository.deleteById(donadorID);
-        this.donadoresRepository.save(donadorFinal);
+        //this.donadoresRepository.deleteById(donadorID); la saque porque ya se encarga en InMemoRepo
+        this.donadoresRepository.update(donadorFinal); //antes habia un save
 
         return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
     }
@@ -228,6 +228,13 @@ public class Fachada implements FachadaDonadoresYEntidades {
         val queja = donadoresYEntidadesDataMapper.toQueja(quejaDTO);
         val quejaGuardada = this.quejaRepository.save(queja);
 
+        Donador donador = this.donadoresRepository.findById(queja.getDonadorId()).get();
+        donador.recalcularEstado();
+        this.donadoresRepository.update(donador);
+
+        // donador
+        //donador.recalcularEstado()
+        // save.donador
         return donadoresYEntidadesDataMapper.toQuejaDTO(quejaGuardada);
     }
 
@@ -235,7 +242,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
     public List<NecesidadMaterialDTO> obtenerNecesidadesInsatisfechasDe(String productoSolicitado) {
         // A implementar por el alumno
         return necesidadesRepository.findAll().stream()
-                .filter(necesidad -> necesidad.esDelProducto(productoSolicitado))
+                .filter(necesidad -> necesidad.esDelProducto(productoSolicitado) && !necesidad.estaSatisfecha())
                 .map(donadoresYEntidadesDataMapper::toNecesidadMaterialDTO)
                 .toList();
     }
