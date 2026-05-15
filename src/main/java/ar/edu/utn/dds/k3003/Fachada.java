@@ -124,7 +124,9 @@ public class Fachada implements FachadaDonadoresYEntidades {
     @Override
     public List<QuejaDTO> obtenerQuejasDe(String donadorID) throws NoSuchElementException {
         // A implementar por el alumno
-
+        donadoresRepository
+                .findById(donadorID)
+                .orElseThrow(() -> new RuntimeException("No existe el donador con id" + donadorID));
         return quejaRepository.findAll().stream()
                 .filter(queja -> queja.getDonadorId().equals(donadorID))
                 .map(donadoresYEntidadesDataMapper::toQuejaDTO)
