@@ -24,20 +24,7 @@ public class EntidadBenefica {
         this.email = email;
     }
 
-    public void agregarNecesidad(NecesidadMaterial necesidad) {
-        this.necesidades.add(necesidad);
-    }
-    public  List<NecesidadMaterial> necesidadesInsatisfechas() {
-        return necesidades.stream()
-                .filter(necesidad -> !necesidad.estaSatisfecha())
-                .collect(Collectors.toList());
-    }
-    public List<NecesidadMaterial> necesidadesInsatisfechasDelProducto(String producto) {
-        return necesidades.stream()
-                .filter(necesidad -> !necesidad.estaSatisfecha())
-                .filter(necesidad -> necesidad.esDelProducto(producto))
-                .toList();
-    }
+
     public String getId() {
         return id;
     }

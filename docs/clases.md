@@ -15,13 +15,6 @@ classDiagram
 	-recalcularEstado()  
 	}  
 	
-	class DonadorStats {
-	-id: String
-	-nombre: String
-	-apellido: String
-	-edad: Integer
-	-misionActualID: String
-	}
 	  
 	class EstadoDonadorEnum {  
 	<<enum>>  
@@ -44,10 +37,7 @@ classDiagram
 	  -domicilio: String
 	  -telefono: String
 	  -email: String
-	  -necesidades: List~NecesidadMaterial~
-	  +agregarNecesidad(NecesidadMaterial)
-	  +necesidadesInsatisfechasPorProducto(p: Producto): List<NecesidadMaterial>
-	  +satisfacerNecesidad(id: Long, cantidad: int)
+	  
 	}
 	
 	class NecesidadMaterial {
@@ -64,11 +54,13 @@ classDiagram
 	  +satisfacer(cantidad: int)
 	}
 	
-	class NecesidadExtraordinaria
+	class NecesidadExtraordinaria {
+	  +satisfacer(cantidad: int)
+	}
 	
-	class NecesidadRecurrente
-	
-	Donador "1" o-- "*" DonadorStats
+	class NecesidadRecurrente{
+	  +satisfacer(cantidad: int)
+	}
 	NecesidadMaterial <|-- NecesidadExtraordinaria
 	NecesidadMaterial <|-- NecesidadRecurrente
 	EntidadBenefica "1" o-- "*" NecesidadMaterial

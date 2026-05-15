@@ -30,24 +30,17 @@ public class DonadorController {
   // Opcion 1 utilizando @RequestMapping
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<DonadorDTO> postDonador(@RequestBody DonadorDTO donadorDTO) {
-    try {
       DonadorDTO donadorAgregado = fachada.agregarDonador(donadorDTO);
       return ResponseEntity.status(HttpStatus.CREATED).body(donadorAgregado);
-    }catch(IllegalArgumentException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-    }
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/{id}")
   public ResponseEntity<DonadorDTO> getDonador(@PathVariable String id) {
-    try {
       DonadorDTO donadorBuscado = fachada.buscarDonadorPorID(id);
       return ResponseEntity.status(HttpStatus.OK).body(donadorBuscado);
-    }catch(DonadorNoEncontradoException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-
   }
+
+
 
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<List<DonadorDTO>> getDonadores() {
@@ -58,6 +51,7 @@ public class DonadorController {
   @RequestMapping(method = RequestMethod.GET, value = "/{id}/puede-donar")
   public ResponseEntity<Map<String, Boolean>> puedeDonar(@PathVariable String id) {
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("puedeDonar",this.fachada.puedeDonar(id)));
+
   }
 
   @RequestMapping(method = RequestMethod.PATCH, value = "/{id}/estado")
@@ -66,7 +60,7 @@ public class DonadorController {
     if (!request.containsKey("estado") || Arrays.stream(EstadoDonadorEnum.values())
             .noneMatch(e -> e.name().equals(request.get("estado"))))
     {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      throw new IllegalArgumentException("Falta campo estado, o bien esta presente pero su valor es incorrecto");
     }
     return ResponseEntity.status(HttpStatus.OK).body(this.fachada.modificarEstado(id,EstadoDonadorEnum.valueOf(request.get("estado"))));
   }
@@ -77,7 +71,7 @@ public class DonadorController {
     if (!request.containsKey("categoria") || Arrays.stream(CategoriaDonadorEnum.values())
             .noneMatch(e -> e.name().equals(request.get("categoria"))))
     {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      throw new IllegalArgumentException("Falta campo categoria, o bien su valor es incorrecto");
     }
     return ResponseEntity.status(HttpStatus.OK).body(this.fachada.modifcarCategoria(id,request.get("categoria")));
   }
@@ -91,18 +85,19 @@ public class DonadorController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/{donadorID}/quejas")
   public ResponseEntity<QuejaDTO> agregarQueja(@PathVariable String donadorID, @RequestBody Map<String, String> request) {
-    if (!request.containsKey("donacionID") || !request.containsKey("descripcion"))
-    {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-    }else{
-      QuejaDTO nuevaQueja = new QuejaDTO(null,request.get("donacionID"),donadorID, LocalDate.now(),request.get("descripcion"));
+      if (!request.containsKey("donacionID") || !request.containsKey("descripcion")) {
+        throw new IllegalArgumentException("Falta campo donacionID o descripcion");
+      }
+      QuejaDTO nuevaQueja = new QuejaDTO(null, request.get("donacionID"), donadorID, LocalDate.now(), request.get("descripcion"));
       return ResponseEntity.status(HttpStatus.CREATED).body(this.fachada.agregarQueja(nuevaQueja));
-    }
+
   }
 
   @RequestMapping(method = RequestMethod.GET, value= "/{id}/estadisticas")
   public ResponseEntity<DonadorStatsDTO> getEstadisticas(@PathVariable String id) {
-    return ResponseEntity.status(HttpStatus.OK).body(this.fachada.estadisticasDonador(id));
+      return ResponseEntity.status(HttpStatus.OK).body(this.fachada.estadisticasDonador(id));
+
+
   }
 
   //@GetMapping

@@ -41,6 +41,8 @@ public class Donador {
     this.domicilio = domicilio;
     this.estado = EstadoDonadorEnum.VERIFICADO;
     this.categoria = "Ocasional";
+
+    this.agregarEstadoHistorial();
   }
   public boolean puedeDonar() {
       return switch (estado) {
@@ -51,18 +53,21 @@ public class Donador {
   }
 
   private void agregarEstadoHistorial() {
-    historial.add(estado);
+    if(!historial.isEmpty() && historial.getLast()!= this.estado) {
+      historial.add(estado);
+    }
+
   }
   public void recalcularEstado() {
     cantidadQuejas++;
     if (cantidadQuejas >= 10) {
       this.estado = EstadoDonadorEnum.BANEADO;
+      this.agregarEstadoHistorial();
     } else if (cantidadQuejas >=5 ) {
       this.estado = EstadoDonadorEnum.SOSPECHOSO;
-    } else {
-      this.estado = EstadoDonadorEnum.VERIFICADO;
+      this.agregarEstadoHistorial();
     }
-    this.agregarEstadoHistorial();
+
   }
 
 }

@@ -8,13 +8,16 @@
 ---
 
 🧩 Componente Desarrollado
--
+- **Donadores y Entidad** 
 
 ---
 
 🧩 Link al despliegue en Render
--
+-  **https://tpa-entrega2-v2.onrender.com**
 
+
+🧩 Link al Swagger
+-  **https://app.swaggerhub.com/apis/utn-ec9/tpa-entrega2-donadores-agonzalezquiroga/v1**
 ---
 
 ### ⚠️ Importante
