@@ -2,8 +2,8 @@
 # 🧪 2026 - Trabajo Práctico Anual
 
 ## 👤 Datos del Alumno
-- **Nombre:Alvaro Mariano**
-- **Apellido: Gonzalez Quiroga**
+- **Nombre:Pablo**
+- **Apellido: Gimenez**
 
 ---
 
@@ -13,11 +13,11 @@
 ---
 
 🧩 Link al despliegue en Render
--  **https://tpa-entrega2-v2.onrender.com**
+-  
 
 
 🧩 Link al Swagger
--  **https://app.swaggerhub.com/apis/utn-ec9/tpa-entrega2-donadores-agonzalezquiroga/v1**
+-  
 ---
 
 ### ⚠️ Importante
