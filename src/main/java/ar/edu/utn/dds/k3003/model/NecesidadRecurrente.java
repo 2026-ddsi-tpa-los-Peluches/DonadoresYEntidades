@@ -1,5 +1,16 @@
 package ar.edu.utn.dds.k3003.model;
 
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@Entity
+@DiscriminatorValue("RECURRENTE")
 public class NecesidadRecurrente extends NecesidadMaterial {
     public NecesidadRecurrente(
             String entidadID,
@@ -16,7 +27,7 @@ public class NecesidadRecurrente extends NecesidadMaterial {
         if (cantidad < this.getCantidadObjetivo()) {
             throw new IllegalArgumentException("Cantidad debe ser mayor a la necesaria");
         }
-        this.setCantidadRecibida(this.getCantidadRecibida() + cantidad);  //TODO
+        this.setCantidadRecibida(this.getCantidadRecibida() + cantidad);
     }
 
 }

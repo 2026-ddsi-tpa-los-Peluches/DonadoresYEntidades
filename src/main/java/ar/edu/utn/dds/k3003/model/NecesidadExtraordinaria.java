@@ -1,5 +1,11 @@
 package ar.edu.utn.dds.k3003.model;
 
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("EXTRAORDINARIA")
 public class NecesidadExtraordinaria extends NecesidadMaterial {
     public NecesidadExtraordinaria(
             String entidadID,

@@ -1,13 +1,39 @@
 package ar.edu.utn.dds.k3003.model;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EstadoDonadorEnum;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+// Importaciones correctas de Jakarta (Spring Boot 3+)
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+
+@Setter
+@Getter
+@Entity
+@Table(name = "quejas")
 public class Queja {
+
+    @Id
     private String id;
+
+    @Column(name = "donacion_id")
     private String donacionId;
+
+    @Column(name = "donador_id")
     private String donadorId;
+
+    @Column(name = "motivo")
     private String motivo;
+
+    @Column(name = "fecha")
     private LocalDate fecha;
+
+    public Queja() {
+    }
 
     public Queja(
             String id,
@@ -23,43 +49,4 @@ public class Queja {
         this.fecha = fecha;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getDonacionId() {
-        return donacionId;
-    }
-
-    public void setDonacionId(String donacionId) {
-        this.donacionId = donacionId;
-    }
-
-    public String getDonadorId() {
-        return donadorId;
-    }
-
-    public void setDonadorId(String donadorId) {
-        this.donadorId = donadorId;
-    }
-
-    public String getMotivo() {
-        return motivo;
-    }
-
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
 }

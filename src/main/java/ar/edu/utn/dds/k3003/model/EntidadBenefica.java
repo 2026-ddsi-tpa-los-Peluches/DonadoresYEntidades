@@ -1,66 +1,56 @@
 package ar.edu.utn.dds.k3003.model;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EstadoDonadorEnum;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+
+@Getter
+@Setter
+@Entity
+@Table(name = "entidades_beneficas")
 public class EntidadBenefica {
-    private String id;
-    private String razonSocial;
-    private String domicilio;
-    private String telefono;
-    private String email;
-    private List<NecesidadMaterial> necesidades = new ArrayList<>();
 
-    public EntidadBenefica(
-            String razonSocial,
-            String domicilio,
-            String telefono,
-            String email)
-    {
-        this.razonSocial = razonSocial;
-        this.domicilio = domicilio;
-        this.telefono = telefono;
-        this.email = email;
-    }
+        @Id
+        private String id;
 
+        @Column(name = "razon_social")
+        private String razonSocial;
 
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
+        @Column(name = "domicilio")
+        private String domicilio;
 
-    public String getRazonSocial() {
-        return razonSocial;
-    }
+        @Column(name = "telefono")
+        private String telefono;
 
-    public void setRazonSocial(String razonSocial) {
-        this.razonSocial = razonSocial;
-    }
+        @Column(name = "email")
+        private String email;
 
-    public String getDomicilio() {
-        return domicilio;
-    }
+        // Relación OneToMany: Una Entidad tiene muchas Necesidades
+        // cascade = CascadeType.ALL hace que si guardás la entidad, se guarden sus necesidades solas.
+        @OneToMany(mappedBy = "entidadBenefica", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+        private List<NecesidadMaterial> necesidades = new ArrayList<>();
 
-    public void setDomicilio(String domicilio) {
-        this.domicilio = domicilio;
-    }
+        // Constructor vacío obligatorio de JPA
+        public EntidadBenefica() {
+        }
 
-    public String getTelefono() {
-        return telefono;
-    }
+        public EntidadBenefica(
+                String razonSocial,
+                String domicilio,
+                String telefono,
+                String email)
+        {
+            this.razonSocial = razonSocial;
+            this.domicilio = domicilio;
+            this.telefono = telefono;
+            this.email = email;
+        }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

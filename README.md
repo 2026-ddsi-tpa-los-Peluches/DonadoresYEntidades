@@ -8,7 +8,7 @@
 ---
 
 🧩 Componente Desarrollado
-- **Donadores y Entidad** 
+- **Donadores y Entidad**
 
 ---
 

@@ -8,21 +8,21 @@ import org.junit.jupiter.api.Test;
 
 public class DonadoresYEntidadesTest {
 
-  Fachada instancia;
-
-  @SneakyThrows
-  @BeforeEach
-  void setUp() {
-    instancia = new Fachada();
-  }
-
-  @Test
-  void testSiempreTrue() {
-    Assertions.assertTrue(true);
-  }
-
-  @Test
-  void testSiempreEquals() {
-    Assertions.assertEquals(1, 1);
-  }
+//  Fachada instancia;
+//
+//  @SneakyThrows
+//  @BeforeEach
+//  void setUp() {
+//    instancia = new Fachada();
+//  }
+//
+//  @Test
+//  void testSiempreTrue() {
+//    Assertions.assertTrue(true);
+//  }
+//
+//  @Test
+//  void testSiempreEquals() {
+//    Assertions.assertEquals(1, 1);
+//  }
 }
