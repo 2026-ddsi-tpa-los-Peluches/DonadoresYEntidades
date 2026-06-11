@@ -18,7 +18,8 @@ import java.time.LocalDate;
 public class Queja {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "donacion_id")
     private String donacionId;
@@ -36,7 +37,7 @@ public class Queja {
     }
 
     public Queja(
-            String id,
+            Integer id,
             String donacionId,
             String donadorId,
             String motivo,

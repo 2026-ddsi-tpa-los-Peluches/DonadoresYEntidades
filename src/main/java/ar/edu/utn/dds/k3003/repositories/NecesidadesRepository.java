@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public interface NecesidadesRepository extends JpaRepository<NecesidadMaterial, String> {
+public interface NecesidadesRepository extends JpaRepository<NecesidadMaterial, Integer> {
 
 }
 //Optional<NecesidadMaterial> findById(String id);

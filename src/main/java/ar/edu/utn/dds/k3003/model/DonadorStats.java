@@ -15,7 +15,8 @@ import java.util.List;
 public class DonadorStats {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "nombre")
     private String nombre;
@@ -47,7 +48,7 @@ public class DonadorStats {
     }
 
     public DonadorStats(
-            String id,
+            Integer id,
             String nombre,
             String apellido,
             Integer edad,
@@ -62,7 +63,7 @@ public class DonadorStats {
     }
 
     public DonadorStats(
-            String id,
+            Integer id,
             String nombre,
             String apellido,
             Integer edad,

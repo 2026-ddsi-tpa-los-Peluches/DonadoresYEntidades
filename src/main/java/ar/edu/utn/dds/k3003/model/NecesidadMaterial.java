@@ -13,7 +13,8 @@ import lombok.Setter;
 public abstract class NecesidadMaterial {
 
         @Id
-        private String id;
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Integer id;
 
         // Relación ManyToOne con EntidadBenefica (la contraparte del OneToMany)
         @ManyToOne

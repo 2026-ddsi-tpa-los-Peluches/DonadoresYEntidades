@@ -8,31 +8,31 @@ public interface FachadaDonadoresYEntidades {
 
   DonadorDTO agregarDonador(DonadorDTO donadorDTO);
 
-  DonadorDTO buscarDonadorPorID(String donadorID) throws NoSuchElementException;
+  DonadorDTO buscarDonadorPorID(Integer donadorID) throws NoSuchElementException;
 
   EntidadBeneficaDTO agregarEntidad(EntidadBeneficaDTO entidadBeneficaDTO);
 
-  EntidadBeneficaDTO buscarEntidadPorID(String entidadID) throws NoSuchElementException;
+  EntidadBeneficaDTO buscarEntidadPorID(Integer entidadID) throws NoSuchElementException;
 
   NecesidadMaterialDTO registrarNecesidad(NecesidadMaterialDTO necesidadMaterialDTO);
 
   QuejaDTO agregarQueja(QuejaDTO quejaDTO) throws NoSuchElementException;
 
-  Boolean puedeDonar(String donadorID) throws NoSuchElementException;
+  Boolean puedeDonar(Integer donadorID) throws NoSuchElementException;
 
-  List<QuejaDTO> obtenerQuejasDe(String donadorID) throws NoSuchElementException;
+  List<QuejaDTO> obtenerQuejasDe(Integer donadorID) throws NoSuchElementException;
 
-  DonadorDTO modificarEstado(String donadorID, EstadoDonadorEnum estado)
+  DonadorDTO modificarEstado(Integer donadorID, EstadoDonadorEnum estado)
       throws NoSuchElementException;
 
-  DonadorDTO modifcarCategoria(String donadorID, String categoria) throws NoSuchElementException;
+  DonadorDTO modificarCategoria(Integer donadorID, String categoria) throws NoSuchElementException;
 
   List<NecesidadMaterialDTO> obtenerNecesidadesInsatisfechasDe(String productoSolicitadoID);
 
-  NecesidadMaterialDTO satisfacerNecesidad(String necesidadID, Integer cantidad)
+  NecesidadMaterialDTO satisfacerNecesidad(Integer necesidadID, Integer cantidad)
       throws NoSuchElementException;
 
-  DonadorStatsDTO estadisticasDonador(String donadorID);
+  DonadorStatsDTO estadisticasDonador(Integer donadorID);
 
-  void setFachadaIncentivos(FachadaIncentivos fachadaIncentivos);
+
 }

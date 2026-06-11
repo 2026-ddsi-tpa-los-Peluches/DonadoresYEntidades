@@ -18,7 +18,8 @@ import java.util.List;
 public class EntidadBenefica {
 
         @Id
-        private String id;
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Integer id;
 
         @Column(name = "razon_social")
         private String razonSocial;

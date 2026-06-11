@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DonadoresRepository extends JpaRepository<Donador, String> {
+public interface DonadoresRepository extends JpaRepository<Donador, Integer> {
 }
 
 

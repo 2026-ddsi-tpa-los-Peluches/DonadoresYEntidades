@@ -4,6 +4,9 @@ import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+
+import ar.edu.utn.dds.k3003.exceptions.NecesidadYaExistenteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,15 +23,36 @@ public class NecesidadController {
 
   // Opcion 1 utilizando @RequestMapping
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<NecesidadMaterialDTO> postNecesidad(
-      @RequestBody NecesidadMaterialDTO necesidadMaterialDTO) {
+  public ResponseEntity<Object> postNecesidad(
+          @RequestBody NecesidadMaterialDTO necesidadMaterialDTO) {
+
     try {
 
       NecesidadMaterialDTO necesidadAgregada =
-          this.fachada.registrarNecesidad(necesidadMaterialDTO);
-      return ResponseEntity.status(HttpStatus.CREATED).body(necesidadAgregada);
+              this.fachada.registrarNecesidad(necesidadMaterialDTO);
+
+      return ResponseEntity.status(HttpStatus.CREATED)
+              .body(necesidadAgregada);
+
+    } catch (NecesidadYaExistenteException e) {
+
+      return ResponseEntity.status(HttpStatus.CONFLICT)
+              .body(e.getMessage());
+
+    } catch (IllegalArgumentException e) {
+
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+              .body(e.getMessage());
+
+    } catch (NoSuchElementException e) {
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(e.getMessage());
+
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body(e.getMessage());
     }
   }
 
@@ -46,7 +70,7 @@ public class NecesidadController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/{necesidadID}/satisfaccion")
   public ResponseEntity<NecesidadMaterialDTO> satisfacerNecesidad(
-      @PathVariable String necesidadID, @RequestBody Map<String, Integer> request) {
+      @PathVariable Integer necesidadID, @RequestBody Map<String, Integer> request) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(this.fachada.satisfacerNecesidad(necesidadID, request.get("cantidad")));
   }

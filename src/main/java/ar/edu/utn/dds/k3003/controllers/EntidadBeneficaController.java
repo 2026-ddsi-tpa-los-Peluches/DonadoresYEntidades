@@ -31,7 +31,7 @@ public class EntidadBeneficaController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-  public ResponseEntity<EntidadBeneficaDTO> getEntidadBenefica(@PathVariable String id) {
+  public ResponseEntity<EntidadBeneficaDTO> getEntidadBenefica(@PathVariable Integer id) {
     try {
       EntidadBeneficaDTO entidadBuscada = fachada.buscarEntidadPorID(id);
       return ResponseEntity.status(HttpStatus.OK).body(entidadBuscada);

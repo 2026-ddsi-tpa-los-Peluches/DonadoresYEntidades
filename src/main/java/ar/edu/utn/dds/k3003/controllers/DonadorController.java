@@ -32,7 +32,7 @@ public class DonadorController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-  public ResponseEntity<DonadorDTO> getDonador(@PathVariable String id) {
+  public ResponseEntity<DonadorDTO> getDonador(@PathVariable Integer id) {
     DonadorDTO donadorBuscado = fachada.buscarDonadorPorID(id);
     return ResponseEntity.status(HttpStatus.OK).body(donadorBuscado);
   }
@@ -44,14 +44,14 @@ public class DonadorController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/{id}/puede-donar")
-  public ResponseEntity<Map<String, Boolean>> puedeDonar(@PathVariable String id) {
+  public ResponseEntity<Map<String, Boolean>> puedeDonar(@PathVariable Integer id) {
     return ResponseEntity.status(HttpStatus.OK)
         .body(Map.of("puedeDonar", this.fachada.puedeDonar(id)));
   }
 
   @RequestMapping(method = RequestMethod.PATCH, value = "/{id}/estado")
   public ResponseEntity<DonadorDTO> cambiarEstado(
-      @PathVariable String id, @RequestBody Map<String, String> request) {
+      @PathVariable Integer id, @RequestBody Map<String, String> request) {
 
     if (!request.containsKey("estado")
         || Arrays.stream(EstadoDonadorEnum.values())
@@ -65,7 +65,7 @@ public class DonadorController {
 
   @RequestMapping(method = RequestMethod.PATCH, value = "/{id}/categoria")
   public ResponseEntity<DonadorDTO> cambiarCategoria(
-      @PathVariable String id, @RequestBody Map<String, String> request) {
+      @PathVariable Integer id, @RequestBody Map<String, String> request) {
 
     if (!request.containsKey("categoria")
         || Arrays.stream(CategoriaDonadorEnum.values())
@@ -73,13 +73,13 @@ public class DonadorController {
       throw new IllegalArgumentException("Falta campo categoria, o bien su valor es incorrecto");
     }
     return ResponseEntity.status(HttpStatus.OK)
-        .body(this.fachada.modifcarCategoria(id, request.get("categoria")));
+        .body(this.fachada.modificarCategoria(id, request.get("categoria")));
   }
 
   // Opcion 2 utilizando @GetMapping
 
   @RequestMapping(method = RequestMethod.GET, value = "/{id}/quejas")
-  public ResponseEntity<List<QuejaDTO>> getQuejas(@PathVariable String id) {
+  public ResponseEntity<List<QuejaDTO>> getQuejas(@PathVariable Integer id) {
     List<QuejaDTO> quejas = this.fachada.obtenerQuejasDe(id);
     return ResponseEntity.status(HttpStatus.OK).body(quejas);
   }
@@ -101,7 +101,7 @@ public class DonadorController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/{id}/estadisticas")
-  public ResponseEntity<DonadorStatsDTO> getEstadisticas(@PathVariable String id) {
+  public ResponseEntity<DonadorStatsDTO> getEstadisticas(@PathVariable Integer id) {
     return ResponseEntity.status(HttpStatus.OK).body(this.fachada.estadisticasDonador(id));
   }
 

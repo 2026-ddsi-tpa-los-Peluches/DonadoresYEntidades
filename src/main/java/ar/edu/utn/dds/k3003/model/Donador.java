@@ -17,8 +17,9 @@ import java.util.List;
 @Table(name = "donadores")
 public class Donador {
 
-  @Id // <--- Esta es la única anotación válida para la clave primaria
-  private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
   @Column(name = "nombre")
   private String nombre;
@@ -61,7 +62,7 @@ public class Donador {
 
   // Constructor con parámetros
   public Donador(
-          String id,
+          Integer id,
           String nombre,
           String apellido,
           Integer edad,

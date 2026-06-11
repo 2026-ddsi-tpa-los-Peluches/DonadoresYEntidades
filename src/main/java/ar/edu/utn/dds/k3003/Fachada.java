@@ -56,6 +56,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
   @Override
   public DonadorDTO agregarDonador(DonadorDTO donadorDTO) {
 
+    if (donadorDTO.id() != null) {
+      throw new IllegalArgumentException("No debe enviarse ID para crear un donador");
+    }
+
     val donador = donadoresYEntidadesDataMapper.toDonador(donadorDTO);
 
     val donadorGuardado = this.donadoresRepository.save(donador);
@@ -64,7 +68,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
-  public DonadorDTO buscarDonadorPorID(String donadorID) throws NoSuchElementException {
+  public DonadorDTO buscarDonadorPorID(Integer donadorID) throws NoSuchElementException {
     val donadorOptional = this.donadoresRepository.findById(donadorID);
 
     if (donadorOptional.isEmpty()) {
@@ -76,7 +80,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
-  public DonadorDTO modificarEstado(String donadorID, EstadoDonadorEnum estado)
+  public DonadorDTO modificarEstado(Integer donadorID, EstadoDonadorEnum estado)
       throws NoSuchElementException {
     if (estado == null) {
       throw new RuntimeException("Estado no puede ser NULL");
@@ -97,7 +101,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
-  public DonadorDTO modifcarCategoria(String donadorID, String categoria)
+  public DonadorDTO modificarCategoria(Integer donadorID, String categoria)
       throws NoSuchElementException {
     if (categoria == null) {
       throw new RuntimeException("Categoria no puede ser null");
@@ -115,12 +119,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
     return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
   }
 
-  @Override
-  public void setFachadaIncentivos(FachadaIncentivos fachadaIncentivos) {
-  }
+
 
   @Override
-  public Boolean puedeDonar(String donadorID) throws NoSuchElementException {
+  public Boolean puedeDonar(Integer donadorID) throws NoSuchElementException {
     // A implementar por el alumno
     if (donadorID == null) throw new RuntimeException("El donadoID no puede ser NULL");
     Donador donador =
@@ -131,19 +133,19 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
-  public List<QuejaDTO> obtenerQuejasDe(String donadorID) throws NoSuchElementException {
+  public List<QuejaDTO> obtenerQuejasDe(Integer donadorID) throws NoSuchElementException {
     // A implementar por el alumno
     donadoresRepository
         .findById(donadorID)
         .orElseThrow(() -> new RuntimeException("No existe el donador con id" + donadorID));
     return quejaRepository.findAll().stream()
-        .filter(queja -> queja.getDonadorId().equals(donadorID))
+        .filter(queja -> queja.getDonadorId().equals(donadorID.toString()))
         .map(donadoresYEntidadesDataMapper::toQuejaDTO)
         .toList();
   }
 
   @Override
-  public NecesidadMaterialDTO satisfacerNecesidad(String necesidadID, Integer cantidad)
+  public NecesidadMaterialDTO satisfacerNecesidad(Integer necesidadID, Integer cantidad)
       throws NoSuchElementException {
     // A implementar por el alumno
     NecesidadMaterial necesidad =
@@ -157,7 +159,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
-  public DonadorStatsDTO estadisticasDonador(String donadorID) {
+  public DonadorStatsDTO estadisticasDonador(Integer donadorID) {
     DonadorDTO donadorDTO = this.buscarDonadorPorID(donadorID);
 
     List<InsigniaDTO> insigniasDTO = this.incentivosClient.getInsigniasDeDonador(donadorID);
@@ -177,9 +179,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
   @Override
   public EntidadBeneficaDTO agregarEntidad(EntidadBeneficaDTO entidadBeneficaDTO) {
     // A implementar por el alumno
-    if (this.entidadesRepository.findById(entidadBeneficaDTO.id()).isPresent()) {
-      throw new EntidadYaExistenteException("Ya existe una entidad con esa ID");
+    if (entidadBeneficaDTO.id() != null) {
+      throw new IllegalArgumentException("No debe enviarse ID para crear una entidad");
     }
+
     val entidad = donadoresYEntidadesDataMapper.toEntidadBenefica(entidadBeneficaDTO);
     val entidadGuardada = this.entidadesRepository.save(entidad);
 
@@ -188,7 +191,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   @Override
-  public EntidadBeneficaDTO buscarEntidadPorID(String entidadID) throws NoSuchElementException {
+  public EntidadBeneficaDTO buscarEntidadPorID(Integer entidadID) throws NoSuchElementException {
     // A implementar por el alumno
     val entidadOptional = this.entidadesRepository.findById(entidadID);
 
@@ -202,17 +205,24 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   @Override
   public NecesidadMaterialDTO registrarNecesidad(NecesidadMaterialDTO necesidadMaterialDTO) {
-    // A implementar por el alumno
-    /*
-    EntidadBenefica entidad = entidadesRepository
-            .findById(necesidadMaterialDTO.entidadID())
-            .orElseThrow(() -> new RuntimeException
-                    ("No existe la entidad con id " + necesidadMaterialDTO.entidadID()));
 
-     */
-    if (this.necesidadesRepository.findById(necesidadMaterialDTO.id()).isPresent()) {
-      throw new NecesidadYaExistenteException("Ya existe una necesidad con ese ID");
+    if (necesidadMaterialDTO.id() != null) {
+      throw new NecesidadYaExistenteException("Ingresar una necesidad sin ID");
     }
+
+    if (necesidadMaterialDTO.entidadID() == null) {
+      throw new IllegalArgumentException("El entidadID es obligatorio");
+    }
+
+
+    Integer entidadId = Integer.valueOf(necesidadMaterialDTO.entidadID());
+
+    var entidadBenefica = entidadesRepository.findById(entidadId);
+
+    if (entidadBenefica.isEmpty()) {
+      throw new NoSuchElementException("No existe una entidad con ID " + entidadId);
+    }
+
     val necesidad = donadoresYEntidadesDataMapper.toNecesidadMaterial(necesidadMaterialDTO);
 
     val necesidadGuardada = this.necesidadesRepository.save(necesidad);
@@ -223,8 +233,21 @@ public class Fachada implements FachadaDonadoresYEntidades {
   @Override
   public QuejaDTO agregarQueja(QuejaDTO quejaDTO) throws NoSuchElementException {
     try {
-      if (this.quejaRepository.findById(quejaDTO.id()).isPresent()) {
-        throw new QuejaYaExistenteException("Ya existe una queja");
+      if (quejaDTO.id() != null) {
+        throw new NecesidadYaExistenteException("Ingresar una queja sin ID");
+      }
+
+
+      if (quejaDTO.donadorID() == null) {
+        throw new IllegalArgumentException("El donadorID es obligatorio");
+      }
+
+      Integer donadorId = Integer.valueOf(quejaDTO.donadorID());
+
+      var donador = donadoresRepository.findById(donadorId);
+
+      if (donador.isEmpty()) {
+        throw new NoSuchElementException("No existe un donador con ID " + donadorId);
       }
       val queja = donadoresYEntidadesDataMapper.toQueja(quejaDTO);
       val quejaGuardada = this.quejaRepository.save(queja);

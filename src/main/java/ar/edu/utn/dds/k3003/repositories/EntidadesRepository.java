@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public interface EntidadesRepository  extends JpaRepository<EntidadBenefica, String>  {
+public interface EntidadesRepository  extends JpaRepository<EntidadBenefica, Integer>  {
 
 }
 //Optional<EntidadBenefica> findById(String id);

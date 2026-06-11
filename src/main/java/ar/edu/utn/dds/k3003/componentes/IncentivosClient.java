@@ -21,7 +21,7 @@ public class IncentivosClient {
     }
 
     // Corresponde al endpoint GET /insignias/{donadorID} del Swagger
-    public List<InsigniaDTO> getInsigniasDeDonador(String donadorId) {
+    public List<InsigniaDTO> getInsigniasDeDonador(Integer donadorId) {
         if (isMock) return Arrays.asList();
 
         try {
@@ -35,7 +35,7 @@ public class IncentivosClient {
     }
 
     // Corresponde al endpoint GET /misiones/{donadorID} del Swagger
-    public MisionDTO getMisionEnCursoDeDonador(String donadorId) {
+    public MisionDTO getMisionEnCursoDeDonador(Integer donadorId) {
         if (isMock) return null;
 
         try {
