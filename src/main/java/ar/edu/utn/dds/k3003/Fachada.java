@@ -59,6 +59,18 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
 
 
+  public DonadorDTO asignarMision(Integer donadorId, String misionID) {
+    // 1. Buscamos el donador
+    var donador = this.donadoresRepository.findById(donadorId)
+            .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + donadorId));
+
+    donador.setMisionActualID(misionID);
+
+    var donadorGuardado = this.donadoresRepository.save(donador);
+    return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
+  }
+
+
   @Override
   public DonadorDTO agregarDonador(DonadorDTO donadorDTO) {
 
