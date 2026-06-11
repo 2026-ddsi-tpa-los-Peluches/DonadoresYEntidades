@@ -47,8 +47,14 @@ public class Fachada implements FachadaDonadoresYEntidades {
   // 2. El constructor queda vacío
   @Autowired
   public Fachada(MeterRegistry meterRegistry) {
-    this.quejasRegistradasCounter = meterRegistry.counter("quejas.registradas");
-    this.erroresNegocioCounter = meterRegistry.counter("errores.negocio");
+    this.quejasRegistradasCounter = Counter.builder("quejas.registradas")
+            .description("Quejas realizadas")
+            .register(meterRegistry);
+
+    this.erroresNegocioCounter = Counter.builder("errores.negocio")
+            .description("Errores negocio")
+            .register(meterRegistry);
+
   }
 
 
