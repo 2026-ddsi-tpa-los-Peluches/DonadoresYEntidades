@@ -166,20 +166,22 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   @Override
   public DonadorStatsDTO estadisticasDonador(Integer donadorID) {
-    DonadorDTO donadorDTO = this.buscarDonadorPorID(donadorID);
 
-    List<InsigniaDTO> insigniasDTO = this.incentivosClient.getInsigniasDeDonador(donadorID);
-    MisionDTO misionDTO = this.incentivosClient.getMisionEnCursoDeDonador(donadorID);
+    Donador donador = this.donadoresRepository
+            .findById(donadorID)
+            .orElseThrow(() ->
+                    new DonadorNoEncontradoException("No existe el donador"));
 
     return new DonadorStatsDTO(
-        donadorID,
-        donadorDTO.nombre(),
-        donadorDTO.apellido(),
-        donadorDTO.edad(),
-        donadorDTO.estado(),
-        donadorDTO.categoria(),
-        misionDTO.id(),
-        insigniasDTO.stream().map(InsigniaDTO::id).toList());
+            donador.getId(),
+            donador.getNombre(),
+            donador.getApellido(),
+            donador.getEdad(),
+            donador.getEstado(),
+            donador.getCategoria(),
+            donador.getMisionActualID(),
+            donador.getInsigniasID()
+    );
   }
 
   @Override

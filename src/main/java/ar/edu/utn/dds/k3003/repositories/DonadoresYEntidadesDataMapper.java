@@ -106,31 +106,8 @@ public class DonadoresYEntidadesDataMapper {
                 quejaDTO.fecha());
     }
 
-    public DonadorStatsDTO toDonadorStatsDTO(DonadorStats donadorStats) {
-        return new DonadorStatsDTO(
-                donadorStats.getId(),
-                donadorStats.getNombre(),
-                donadorStats.getApellido(),
-                donadorStats.getEdad(),
-                donadorStats.getEstado(),
-                donadorStats.getCategoria(),
-                donadorStats.getMisionActualID(),
-                donadorStats.getInsigniasID()
 
-        );
-    }
 
-    public DonadorStats toDonadorStats(DonadorStatsDTO donadorStatsDTO) {
-        return new DonadorStats(
-                donadorStatsDTO.id(),
-                donadorStatsDTO.nombre(),
-                donadorStatsDTO.apellido(),
-                donadorStatsDTO.edad(),
-                donadorStatsDTO.estado(),
-                donadorStatsDTO.categoria(),
-                donadorStatsDTO.misionActualID()
-        );
-    }
 
 
 }

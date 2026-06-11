@@ -45,6 +45,18 @@ public class Donador {
   @Column(name = "categoria")
   private String categoria;
 
+  @Column(name = "mision_actual_id")
+  private String misionActualID;
+
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(
+          name = "donador_insignias",
+          joinColumns = @JoinColumn(name = "donador_id")
+  )
+  @Column(name = "insignia_id")
+  private List<String> insigniasID = new ArrayList<>();
+
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "donador_historial", joinColumns = @JoinColumn(name = "donador_id"))
   @Enumerated(EnumType.STRING)
