@@ -102,6 +102,13 @@ public class Donador {
     };
   }
 
+  public void agregarInsignia(String insigniaID) {
+    // Validamos que no se agregue la misma insignia dos veces
+    if (this.insigniasID != null && !this.insigniasID.contains(insigniaID)) {
+      this.insigniasID.add(insigniaID);
+    }
+  }
+
   private void agregarEstadoHistorial() {
     if(!historial.isEmpty() && historial.getLast()!= this.estado) {
       historial.add(estado);
