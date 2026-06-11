@@ -13,16 +13,13 @@ public class IncentivosClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String baseUrl;
-    private final boolean isMock;
 
     public IncentivosClient(@Value("${INCENTIVOS_SERVICE_URL:http://localhost:8081}") String baseUrl) {
         this.baseUrl = baseUrl;
-        this.isMock = "http://localhost:8081".equals(baseUrl);
     }
 
     // Corresponde al endpoint GET /insignias/{donadorID} del Swagger
     public List<InsigniaDTO> getInsigniasDeDonador(Integer donadorId) {
-        if (isMock) return Arrays.asList();
 
         try {
             // Armamos la URL exacta como dice el Swagger
@@ -36,7 +33,6 @@ public class IncentivosClient {
 
     // Corresponde al endpoint GET /misiones/{donadorID} del Swagger
     public MisionDTO getMisionEnCursoDeDonador(Integer donadorId) {
-        if (isMock) return null;
 
         try {
             // Armamos la URL exacta como dice el Swagger
