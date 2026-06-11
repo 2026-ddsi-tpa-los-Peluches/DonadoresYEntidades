@@ -38,14 +38,14 @@ public class DonadorController {
           @PathVariable Integer id, @RequestBody Map<String, String> request) {
 
     // 1. Validamos que nos pasen la misionID en el JSON
-    if (!request.containsKey("misionID")) {
-      throw new IllegalArgumentException("Falta campo misionID en el body de la petición");
+    if (!request.containsKey("misionActualID")) {
+      throw new IllegalArgumentException("Falta campo misionActualID en el body de la petición");
     }
 
-    String misionID = request.get("misionID");
+    String misionActualID = request.get("misionActualID");
 
     // 2. Llamamos a la fachada para que asigne la misión
-    DonadorDTO donadorActualizado = this.fachada.asignarMision(id, misionID);
+    DonadorDTO donadorActualizado = this.fachada.asignarMision(id, misionActualID);
 
     // 3. Devolvemos el donador actualizado con código 200 OK
     return ResponseEntity.status(HttpStatus.OK).body(donadorActualizado);
