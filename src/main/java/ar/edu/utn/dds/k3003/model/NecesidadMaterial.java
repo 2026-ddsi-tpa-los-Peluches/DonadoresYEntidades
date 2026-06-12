@@ -21,11 +21,6 @@ public abstract class NecesidadMaterial {
         @JoinColumn(name = "entidad_id", referencedColumnName = "id")
         private EntidadBenefica entidadBenefica;
 
-        // Si querés seguir guardando el String entidadID además de la relación,
-        // tenés que poner insertable = false, updatable = false.
-        // O mejor, borrá entidadID y manejate solo con el objeto entidadBenefica.
-        @Column(name = "entidad_id_string", insertable = false, updatable = false)
-        private String entidadID;
 
         @Column(name = "nivel_urgencia")
         private Integer nivelDeUrgencia;
@@ -51,8 +46,7 @@ public abstract class NecesidadMaterial {
             this.cantidadObjetivo = cantidadObjetivo;
         }
 
-        public NecesidadMaterial(String entidadID, Integer nivelDeUrgencia, String descripcion, String productoSolicitadoID, Integer cantidadObjetivo) {
-            this.entidadID = entidadID;
+        public NecesidadMaterial(Integer nivelDeUrgencia, String descripcion, String productoSolicitadoID, Integer cantidadObjetivo) {
             this.nivelDeUrgencia = nivelDeUrgencia;
             this.descripcion = descripcion;
             this.productoSolicitadoID = productoSolicitadoID;

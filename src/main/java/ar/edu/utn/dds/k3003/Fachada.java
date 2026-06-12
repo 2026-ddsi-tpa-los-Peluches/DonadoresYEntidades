@@ -265,7 +265,13 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     val necesidad = donadoresYEntidadesDataMapper.toNecesidadMaterial(necesidadMaterialDTO);
 
+    // 3. ACÁ SE ASIGNA LA ENTIDAD
+    necesidad.setEntidadBenefica(entidadBenefica.get());
+
+
     val necesidadGuardada = this.necesidadesRepository.save(necesidad);
+
+
 
     return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
   }

@@ -36,7 +36,6 @@ public class DonadoresYEntidadesDataMapper {
                 entidad.getDomicilio(),
                 entidad.getTelefono(),
                 entidad.getEmail());
-
     }
 
     public EntidadBenefica toEntidadBenefica(EntidadBeneficaDTO entidadBeneficaDTO) {
@@ -58,9 +57,12 @@ public class DonadoresYEntidadesDataMapper {
             throw new IllegalArgumentException("No existe el tipo de NecesidadMaterial");
         }
 
+        // Se obtiene el ID del objeto EntidadBenefica en lugar del String suelto
+        String entidadIdStr = necesidad.getEntidadBenefica() != null ? String.valueOf(necesidad.getEntidadBenefica().getId()) : null;
+
         return new NecesidadMaterialDTO(
                 necesidad.getId(),
-                necesidad.getEntidadID(),
+                entidadIdStr, // <--- Acá se pasa el ID correctamente
                 necesidad.getNivelDeUrgencia(),
                 necesidad.getDescripcion(),
                 necesidad.getCantidadObjetivo(),
@@ -72,14 +74,14 @@ public class DonadoresYEntidadesDataMapper {
     public NecesidadMaterial toNecesidadMaterial(NecesidadMaterialDTO necesidadMaterialDTO) {
         return switch (necesidadMaterialDTO.tipo()) {
             case EXTRAORDINARIA -> new NecesidadExtraordinaria(
-                    necesidadMaterialDTO.entidadID(),
+                    // Borramos necesidadMaterialDTO.entidadID()
                     necesidadMaterialDTO.nivelDeUrgencia(),
                     necesidadMaterialDTO.descripcion(),
                     necesidadMaterialDTO.productoSolicitadoID(),
                     necesidadMaterialDTO.cantidadObjetivo()
             );
             case RECURRENTE -> new NecesidadRecurrente(
-                    necesidadMaterialDTO.entidadID(),
+                    // Borramos necesidadMaterialDTO.entidadID()
                     necesidadMaterialDTO.nivelDeUrgencia(),
                     necesidadMaterialDTO.descripcion(),
                     necesidadMaterialDTO.productoSolicitadoID(),
@@ -105,9 +107,4 @@ public class DonadoresYEntidadesDataMapper {
                 quejaDTO.descripcion(),
                 quejaDTO.fecha());
     }
-
-
-
-
-
 }

@@ -21,13 +21,12 @@ public class NecesidadRecurrente extends NecesidadMaterial {
 
 
     public NecesidadRecurrente(
-            String entidadID,
             Integer nivelDeUrgencia,
             String descripcion,
             String productoSolicitadoID,
             Integer cantidadNecesaria)
     {
-        super(entidadID,nivelDeUrgencia,descripcion,productoSolicitadoID, cantidadNecesaria);
+        super(nivelDeUrgencia,descripcion,productoSolicitadoID, cantidadNecesaria);
     }
 
     @Override
