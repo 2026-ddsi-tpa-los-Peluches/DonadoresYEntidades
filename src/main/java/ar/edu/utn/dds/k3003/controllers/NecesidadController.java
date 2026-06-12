@@ -56,9 +56,9 @@ public class NecesidadController {
     }
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(method = RequestMethod.GET,value = "/{productoID}")
   public ResponseEntity<List<NecesidadMaterialDTO>> getNecesidades(
-      @RequestBody String productoID) {
+      @PathVariable String productoID) {
     try {
       List<NecesidadMaterialDTO> necesidades =
           this.fachada.obtenerNecesidadesInsatisfechasDe(productoID);

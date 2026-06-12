@@ -7,6 +7,13 @@ import jakarta.persistence.Entity;
 @Entity
 @DiscriminatorValue("EXTRAORDINARIA")
 public class NecesidadExtraordinaria extends NecesidadMaterial {
+
+
+
+    // ¡ESTO ES LO QUE TE FALTA!
+    protected NecesidadExtraordinaria() {
+    }
+
     public NecesidadExtraordinaria(
             String entidadID,
             Integer nivelDeUrgencia,

@@ -12,6 +12,14 @@ import lombok.Setter;
 @Entity
 @DiscriminatorValue("RECURRENTE")
 public class NecesidadRecurrente extends NecesidadMaterial {
+
+
+
+    protected NecesidadRecurrente() {
+    }
+
+
+
     public NecesidadRecurrente(
             String entidadID,
             Integer nivelDeUrgencia,
