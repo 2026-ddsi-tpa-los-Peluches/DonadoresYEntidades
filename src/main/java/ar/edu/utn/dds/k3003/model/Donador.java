@@ -102,6 +102,10 @@ public class Donador {
     };
   }
 
+  public boolean estaBaneado() {
+    return this.estado == EstadoDonadorEnum.BANEADO;
+  }
+
   public void agregarInsignia(String insigniaID) {
     // Validamos que no se agregue la misma insignia dos veces
     if (this.insigniasID != null && !this.insigniasID.contains(insigniaID)) {

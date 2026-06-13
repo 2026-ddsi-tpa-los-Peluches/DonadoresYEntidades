@@ -66,6 +66,12 @@ public class Fachada implements FachadaDonadoresYEntidades {
     var donador = this.donadoresRepository.findById(donadorId)
             .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + donadorId));
 
+    // Un donador baneado no puede aceptar misiones que le manda Incentivos
+    if (donador.estaBaneado()) {
+      throw new IllegalStateException(
+          "El donador con ID " + donadorId + " esta baneado y no puede aceptar misiones");
+    }
+
     donador.setMisionActualID(misionActualID);
 
     var donadorGuardado = this.donadoresRepository.save(donador);
