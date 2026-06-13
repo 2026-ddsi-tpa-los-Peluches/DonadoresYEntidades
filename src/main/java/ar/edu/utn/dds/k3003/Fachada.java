@@ -12,6 +12,8 @@ import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
 import ar.edu.utn.dds.k3003.repositories.*;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import lombok.val;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Counter;
@@ -290,7 +292,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
       Integer donadorId = Integer.valueOf(quejaDTO.donadorID());
 
-      var donador = donadoresRepository.findById(donadorId);
+      Optional<Donador> donador = this.donadoresRepository.findById(donadorId);
 
       if (donador.isEmpty()) {
         throw new NoSuchElementException("No existe un donador con ID " + donadorId);
@@ -300,6 +302,11 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
       // --- INCREMENTAR MÉTRICA AQUÍ ---
       this.quejasRegistradasCounter.increment();
+
+      Donador donadorClonado= donador.get();
+      donadorClonado.aumentarQueja(1);
+
+      this.donadoresRepository.save(donadorClonado);
 
       return donadoresYEntidadesDataMapper.toQuejaDTO(quejaGuardada);
     } catch (Exception e) {

@@ -125,4 +125,9 @@ public class Donador {
       this.agregarEstadoHistorial();
     }
   }
+
+
+  public void aumentarQueja(Integer cantidadAAumentar){
+    cantidadQuejas += cantidadAAumentar;
+  }
 }
