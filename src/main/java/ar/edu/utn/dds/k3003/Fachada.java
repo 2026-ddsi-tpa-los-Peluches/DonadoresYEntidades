@@ -201,6 +201,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
                 () -> new NecesidadNoEncontradaException("No existe una necesidad con ese ID"));
 
     necesidad.satisfacer(cantidad);
+    this.necesidadesRepository.save(necesidad);
+
     return null;
   }
 

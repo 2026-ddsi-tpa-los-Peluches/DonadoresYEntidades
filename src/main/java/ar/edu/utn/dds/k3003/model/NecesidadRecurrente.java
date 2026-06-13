@@ -31,9 +31,6 @@ public class NecesidadRecurrente extends NecesidadMaterial {
 
     @Override
     public void satisfacer(Integer cantidad) {
-        if (cantidad < this.getCantidadObjetivo()) {
-            throw new IllegalArgumentException("Cantidad debe ser mayor a la necesaria");
-        }
         this.setCantidadRecibida(this.getCantidadRecibida() + cantidad);
     }
 
