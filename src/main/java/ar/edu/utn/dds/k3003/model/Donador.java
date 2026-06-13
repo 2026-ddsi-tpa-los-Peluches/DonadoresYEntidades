@@ -129,5 +129,12 @@ public class Donador {
 
   public void aumentarQueja(Integer cantidadAAumentar){
     cantidadQuejas += cantidadAAumentar;
+    if(cantidadQuejas == 5){
+      this.estado = EstadoDonadorEnum.SOSPECHOSO;
+    }
+    if(cantidadQuejas == 10){
+      this.estado = EstadoDonadorEnum.BANEADO;
+    }
+
   }
 }
