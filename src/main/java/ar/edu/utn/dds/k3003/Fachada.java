@@ -1,11 +1,10 @@
 package ar.edu.utn.dds.k3003;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
-import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
-import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaIncentivos;
+import ar.edu.utn.dds.k3003.componentes.DonacionesClient;
 import ar.edu.utn.dds.k3003.componentes.IncentivosClient;
+import ar.edu.utn.dds.k3003.componentes.LogisticaClient;
 import ar.edu.utn.dds.k3003.exceptions.*;
 import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
@@ -38,6 +37,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   @Autowired
   private IncentivosClient incentivosClient;
+  private DonacionesClient donacionesClient;
+  private LogisticaClient logisticaClient;
 
   // Tus métricas personalizadas
   private final Counter quejasRegistradasCounter;
@@ -264,26 +265,41 @@ public class Fachada implements FachadaDonadoresYEntidades {
       throw new IllegalArgumentException("El entidadID es obligatorio");
     }
 
+    //Validar producto con el módulo de Donaciones
 
-    Integer entidadId = Integer.valueOf(necesidadMaterialDTO.entidadID());
-
-    var entidadBenefica = entidadesRepository.findById(entidadId);
-
-    if (entidadBenefica.isEmpty()) {
-      throw new NoSuchElementException("No existe una entidad con ID " + entidadId);
+    String productoId = necesidadMaterialDTO.productoSolicitadoID();
+    if (!donacionesClient.existeProducto(productoId)) {
+      throw new IllegalArgumentException("no esta considerado el producto necesitado");
     }
 
+
+    //Ver que existe la entidad
+    Integer entidadId = Integer.valueOf(necesidadMaterialDTO.entidadID());
+    var entidadBenefica = entidadesRepository.findById(entidadId)
+            .orElseThrow(() -> new NoSuchElementException("No existe una entidad con ID " + entidadId));
+
+
+    //guardo necesidad En la DB
     val necesidad = donadoresYEntidadesDataMapper.toNecesidadMaterial(necesidadMaterialDTO);
-
-    // 3. ACÁ SE ASIGNA LA ENTIDAD
-    necesidad.setEntidadBenefica(entidadBenefica.get());
-
-
+    int cantidadRecibidaInicial = (necesidadMaterialDTO.cantidadRecibida() != null) ? necesidadMaterialDTO.cantidadRecibida() : 0;
+    necesidad.setEntidadBenefica(entidadBenefica);
     val necesidadGuardada = this.necesidadesRepository.save(necesidad);
 
+    NecesidadMaterialDTO DTOConID = donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
 
+    // Consultar a Logística pasándole el DTO QUE YA TIENE ID REAL pq ya hace asignacion si puede
+    Integer cantidadAsignada = logisticaClient.asignarProductoAEntidad(DTOConID);
+    int asignada = (cantidadAsignada != null) ? cantidadAsignada : 0;
 
-    return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
+    if (asignada > 0) {
+
+      necesidadGuardada.satisfacer(asignada);
+
+      // Guardamos la actualización en BD
+      val necesidadActualizada = this.necesidadesRepository.save(necesidadGuardada);
+      return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadActualizada);
+    }
+    return DTOConID;
   }
 
   @Override
