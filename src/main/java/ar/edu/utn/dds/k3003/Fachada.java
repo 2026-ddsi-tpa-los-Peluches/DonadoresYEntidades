@@ -1,10 +1,12 @@
 package ar.edu.utn.dds.k3003;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaIncentivos;
+import ar.edu.utn.dds.k3003.componentes.DonadoresClient;
 import ar.edu.utn.dds.k3003.componentes.IncentivosClient;
 import ar.edu.utn.dds.k3003.exceptions.*;
 import ar.edu.utn.dds.k3003.model.Donador;
@@ -38,6 +40,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   @Autowired
   private IncentivosClient incentivosClient;
+
+  @Autowired
+  private DonadoresClient donadoresClient;
+
 
   // Tus métricas personalizadas
   private final Counter quejasRegistradasCounter;
@@ -265,6 +271,15 @@ public class Fachada implements FachadaDonadoresYEntidades {
     }
 
 
+    if (necesidadMaterialDTO.productoSolicitadoID() == null) {
+      throw new IllegalArgumentException("El productoId es obligatorio");
+    }
+
+
+     ProductoDTO producto = donadoresClient.getProductoPorId(necesidadMaterialDTO.productoSolicitadoID());
+
+
+
     Integer entidadId = Integer.valueOf(necesidadMaterialDTO.entidadID());
 
     var entidadBenefica = entidadesRepository.findById(entidadId);
@@ -345,4 +360,40 @@ public class Fachada implements FachadaDonadoresYEntidades {
         .map(donadoresYEntidadesDataMapper::toEntidadBeneficaDTO)
         .toList();
   }
+
+
+  public NecesidadMaterialDTO buscarNecesidadPorID(Integer id) {
+    NecesidadMaterial necesidad = this.necesidadesRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("No existe una necesidad con ID: " + id));
+    return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidad);
+  }
+
+  public void borrarNecesidadPorID(Integer id) {
+    if (!this.necesidadesRepository.existsById(id)) {
+      throw new NoSuchElementException("No existe una necesidad con ID: " + id);
+    }
+    this.necesidadesRepository.deleteById(id);
+  }
+
+  public NecesidadMaterialDTO editarNecesidad(Integer id, NecesidadMaterialDTO dto) {
+    NecesidadMaterial necesidad = this.necesidadesRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("No existe una necesidad con ID: " + id));
+
+    // Solo actualizamos los campos modificables
+    if (dto.descripcion() != null) {
+      necesidad.setDescripcion(dto.descripcion());
+    }
+    if (dto.nivelDeUrgencia() != null) {
+      necesidad.setNivelDeUrgencia(dto.nivelDeUrgencia());
+    }
+    if (dto.cantidadObjetivo() != null) {
+      necesidad.setCantidadObjetivo(dto.cantidadObjetivo());
+    }
+
+    NecesidadMaterial necesidadGuardada = this.necesidadesRepository.save(necesidad);
+    return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
+  }
+
+
+
 }

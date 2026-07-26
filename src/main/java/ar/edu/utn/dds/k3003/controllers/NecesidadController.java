@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import ar.edu.utn.dds.k3003.exceptions.NecesidadYaExistenteException;
+import ar.edu.utn.dds.k3003.exceptions.ProductoNoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,12 @@ public class NecesidadController {
       return ResponseEntity.status(HttpStatus.CREATED)
               .body(necesidadAgregada);
 
-    } catch (NecesidadYaExistenteException e) {
+    }
+    catch (ProductoNoEncontradoException | NoSuchElementException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(e.getMessage());
+    }
+    catch (NecesidadYaExistenteException e) {
 
       return ResponseEntity.status(HttpStatus.CONFLICT)
               .body(e.getMessage());
@@ -42,11 +48,6 @@ public class NecesidadController {
     } catch (IllegalArgumentException e) {
 
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-              .body(e.getMessage());
-
-    } catch (NoSuchElementException e) {
-
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
               .body(e.getMessage());
 
     } catch (Exception e) {
@@ -74,6 +75,46 @@ public class NecesidadController {
     return ResponseEntity.status(HttpStatus.OK)
         .body(this.fachada.satisfacerNecesidad(necesidadID, request.get("cantidad")));
   }
+
+  @GetMapping("/detalle/{id}")
+  public ResponseEntity<Object> buscarNecesidadPorId(@PathVariable Integer id) {
+    try {
+      NecesidadMaterialDTO necesidad = this.fachada.buscarNecesidadPorID(id);
+      return ResponseEntity.status(HttpStatus.OK).body(necesidad);
+    } catch (NoSuchElementException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Object> editarNecesidad(
+          @PathVariable Integer id,
+          @RequestBody NecesidadMaterialDTO necesidadMaterialDTO) {
+    try {
+      NecesidadMaterialDTO actualizada = this.fachada.editarNecesidad(id, necesidadMaterialDTO);
+      return ResponseEntity.status(HttpStatus.OK).body(actualizada);
+    } catch (NoSuchElementException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Object> borrarNecesidad(@PathVariable Integer id) {
+    try {
+      this.fachada.borrarNecesidadPorID(id);
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } catch (NoSuchElementException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
+
+
 
   // Opcion 2 utilizando @GetMapping
 
