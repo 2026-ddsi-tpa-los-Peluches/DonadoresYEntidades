@@ -18,7 +18,7 @@ public class DonadoresClient {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String baseUrl;
 
-    public DonadoresClient(@Value("${DONADORES_SERVICE_URL}") String baseUrl) {
+    public DonadoresClient(@Value("${DONACIONES_URL}") String baseUrl) {
         this.baseUrl = baseUrl;
     }
 

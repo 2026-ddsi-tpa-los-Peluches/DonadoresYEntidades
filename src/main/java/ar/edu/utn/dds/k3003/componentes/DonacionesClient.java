@@ -24,11 +24,10 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 @Service
 public class DonacionesClient {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
     private final String baseUrl;
 
-    public DonacionesClient(@Value("${DONACIONES_URL}") String baseUrl, RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public DonacionesClient(@Value("${DONACIONES_URL}") String baseUrl) {
         this.baseUrl = baseUrl;
     }
 
