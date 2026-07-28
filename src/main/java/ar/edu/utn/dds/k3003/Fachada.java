@@ -114,6 +114,21 @@ public class Fachada implements FachadaDonadoresYEntidades {
     return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
   }
 
+  public DonadorDTO quitarInsignia(Integer idDonador, String insigniaID) {
+
+    if (idDonador == null) {
+      throw new IllegalArgumentException("El ID del donador es obligatorio");
+    }
+    var donador = this.donadoresRepository.findById(idDonador)
+            .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + idDonador));
+
+    donador.quitarInsignia(insigniaID);
+
+    var donadorGuardado = this.donadoresRepository.save(donador);
+
+    return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
+  }
+
   @Override
   public DonadorDTO buscarDonadorPorID(Integer donadorID) throws NoSuchElementException {
     val donadorOptional = this.donadoresRepository.findById(donadorID);

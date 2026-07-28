@@ -37,5 +37,15 @@ public class InsigniasController {
         return ResponseEntity.status(HttpStatus.OK).body(donadorActualizado);
     }
 
+    // DELETE /insigniasDonador/{id}/{insigniaID}  -> saca la insignia de la lista del donador.
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}/{insigniaID}")
+    public ResponseEntity<DonadorDTO> quitarInsignia(
+            @PathVariable Integer id, @PathVariable String insigniaID) {
+
+        DonadorDTO donadorActualizado = this.fachada.quitarInsignia(id, insigniaID);
+
+        return ResponseEntity.status(HttpStatus.OK).body(donadorActualizado);
+    }
+
 
 }
