@@ -113,6 +113,12 @@ public class Donador {
     }
   }
 
+  public void quitarInsignia(String insigniaID) {
+    if (this.insigniasID != null) {
+      this.insigniasID.remove(insigniaID);
+    }
+  }
+
   private void agregarEstadoHistorial() {
     if(!historial.isEmpty() && historial.getLast()!= this.estado) {
       historial.add(estado);
