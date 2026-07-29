@@ -4,7 +4,10 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDT
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.NoSuchElementException;
 
 @Service
 public class LogisticaClient {
@@ -27,7 +30,12 @@ public class LogisticaClient {
 
             return response.getBody();
 
-        } catch (Exception e) {
+        } catch (HttpClientErrorException.NotFound e) {
+            // Leemos el mensaje original ("No hay stock disponible...") que mandó Logística
+            String mensajeDeLogistica = e.getResponseBodyAsString();
+            throw new NoSuchElementException(mensajeDeLogistica);
+
+        }catch (Exception e) {
             throw new RuntimeException("Error de comunicación al gestionar la donación en Logística", e);
         }
     }

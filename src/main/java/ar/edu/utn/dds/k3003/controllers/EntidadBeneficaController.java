@@ -45,6 +45,22 @@ public class EntidadBeneficaController {
     List<EntidadBeneficaDTO> entidades = fachada.obtenerEntidades();
     return ResponseEntity.status(HttpStatus.OK).body(entidades);
   }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<EntidadBeneficaDTO> putEntidadBenefica(
+          @PathVariable Integer id,
+          @RequestBody EntidadBeneficaDTO entidadBeneficaDTO) {
+    try {
+      // Acá llamás a la lógica de tu negocio / repositorio para actualizar en la BD
+      EntidadBeneficaDTO entidadActualizada = fachada.modificarEntidad(id, entidadBeneficaDTO);
+      return ResponseEntity.ok(entidadActualizada);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+  }
+
+
+
   // Opcion 2 utilizando @GetMapping
 
   // @GetMapping

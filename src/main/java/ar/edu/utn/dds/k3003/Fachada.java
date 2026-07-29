@@ -37,7 +37,11 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   @Autowired
   private IncentivosClient incentivosClient;
+
+  @Autowired
   private DonacionesClient donacionesClient;
+
+  @Autowired
   private LogisticaClient logisticaClient;
 
   // Tus métricas personalizadas
@@ -146,6 +150,29 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
   }
+
+  public EntidadBeneficaDTO modificarEntidad(Integer id, EntidadBeneficaDTO dto) {
+    var entidad = this.entidadesRepository.findById(id)
+            .orElseThrow(() -> new EntidadNoEncontradaException("No existe una entidad con el ID: " + id));
+
+    if (dto.razonSocial() != null) {
+      entidad.setRazonSocial(dto.razonSocial());
+    }
+    if (dto.domicilio() != null) {
+      entidad.setDomicilio(dto.domicilio());
+    }
+    if (dto.telefono() != null) {
+      entidad.setTelefono(dto.telefono());
+    }
+    if (dto.correo() != null) {
+      entidad.setEmail(dto.correo());
+    }
+
+    var entidadGuardada = this.entidadesRepository.save(entidad);
+    return donadoresYEntidadesDataMapper.toEntidadBeneficaDTO(entidadGuardada);
+  }
+
+
 
   @Override
   public DonadorDTO modificarCategoria(Integer donadorID, String categoria)
@@ -269,7 +296,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     String productoId = necesidadMaterialDTO.productoSolicitadoID();
     if (!donacionesClient.existeProducto(productoId)) {
-      throw new IllegalArgumentException("no esta considerado el producto necesitado");
+      throw new NoSuchElementException("No existe el producto id");
     }
 
 
