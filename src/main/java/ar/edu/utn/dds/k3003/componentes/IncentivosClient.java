@@ -14,7 +14,7 @@ public class IncentivosClient {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String baseUrl;
 
-    public IncentivosClient(@Value("${INCENTIVOS_SERVICE_URL:http://localhost:8081}") String baseUrl) {
+    public IncentivosClient(@Value("${url.incentivos}") String baseUrl) {
         this.baseUrl = baseUrl;
     }
 

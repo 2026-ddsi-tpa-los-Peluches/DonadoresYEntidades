@@ -307,42 +307,45 @@ public class Fachada implements FachadaDonadoresYEntidades {
       throw new IllegalArgumentException("El entidadID es obligatorio");
     }
 
-    //Validar producto con el módulo de Donaciones
-
+    // Validar producto con el módulo de Donaciones
     String productoId = necesidadMaterialDTO.productoSolicitadoID();
     if (!donacionesClient.existeProducto(productoId)) {
       throw new NoSuchElementException("No existe el producto id");
     }
 
-
-    //Ver que existe la entidad
+    // Ver que existe la entidad
     Integer entidadId = Integer.valueOf(necesidadMaterialDTO.entidadID());
     var entidadBenefica = entidadesRepository.findById(entidadId)
             .orElseThrow(() -> new NoSuchElementException("No existe una entidad con ID " + entidadId));
 
-
-    //guardo necesidad En la DB
+    // Guardo necesidad en la DB (La necesidad se crea sí o sí)
     val necesidad = donadoresYEntidadesDataMapper.toNecesidadMaterial(necesidadMaterialDTO);
-    int cantidadRecibidaInicial = (necesidadMaterialDTO.cantidadRecibida() != null) ? necesidadMaterialDTO.cantidadRecibida() : 0;
     necesidad.setEntidadBenefica(entidadBenefica);
     val necesidadGuardada = this.necesidadesRepository.save(necesidad);
 
     NecesidadMaterialDTO DTOConID = donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
 
-    // Consultar a Logística pasándole el DTO QUE YA TIENE ID REAL pq ya hace asignacion si puede
-    Integer cantidadAsignada = logisticaClient.asignarProductoAEntidad(DTOConID);
+    // Consultar a Logística pasándole el DTO
+    Integer cantidadAsignada = 0;
+    try {
+      cantidadAsignada = logisticaClient.asignarProductoAEntidad(DTOConID);
+    } catch (NoSuchElementException e) {
+      // Si Logística no tiene stock, capturamos el error: la necesidad SÍ se creó correctamente
+      cantidadAsignada = 0;
+    }
+
     int asignada = (cantidadAsignada != null) ? cantidadAsignada : 0;
 
     if (asignada > 0) {
-
       necesidadGuardada.satisfacer(asignada);
-
-      // Guardamos la actualización en BD
+      // Guardamos la actualización en BD si se le asignó stock
       val necesidadActualizada = this.necesidadesRepository.save(necesidadGuardada);
       return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadActualizada);
     }
+
     return DTOConID;
   }
+
 
   @Override
   public QuejaDTO agregarQueja(QuejaDTO quejaDTO) throws NoSuchElementException {
@@ -423,18 +426,22 @@ public class Fachada implements FachadaDonadoresYEntidades {
     NecesidadMaterial necesidad = this.necesidadesRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("No existe una necesidad con ID: " + id));
 
-    // Solo actualizamos los campos modificables
-    if (dto.descripcion() != null) {
-      necesidad.setDescripcion(dto.descripcion());
-    }
+    // Solo actualizamos los campos permitidos
     if (dto.nivelDeUrgencia() != null) {
       necesidad.setNivelDeUrgencia(dto.nivelDeUrgencia());
     }
-    if (dto.cantidadObjetivo() != null) {
-      necesidad.setCantidadObjetivo(dto.cantidadObjetivo());
+    if (dto.descripcion() != null) {
+      necesidad.setDescripcion(dto.descripcion());
     }
 
     NecesidadMaterial necesidadGuardada = this.necesidadesRepository.save(necesidad);
     return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
   }
+
+
+
+
 }
+
+
+
