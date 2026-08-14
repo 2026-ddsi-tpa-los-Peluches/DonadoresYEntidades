@@ -24,7 +24,7 @@ public class LogisticaClient {
 
     public Integer asignarProductoAEntidad(NecesidadMaterialDTO necesidad) {
         try {
-            String url = baseUrl + "/asignaciones";
+            String url = baseUrl + "/asignaciones/externa";
 
             ResponseEntity<Integer> response = restTemplate.postForEntity(url, necesidad, Integer.class);
 
