@@ -4,6 +4,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
 import ar.edu.utn.dds.k3003.exceptions.ProductoNoEncontradoException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -12,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 public class DonadoresClient {
 
@@ -30,6 +32,7 @@ public class DonadoresClient {
 
         }
         catch (HttpClientErrorException.NotFound e) {
+            log.error("El producto no existe {}", productoId, e);
             throw new ProductoNoEncontradoException("El producto no existe");
         }
         catch (Exception e) {

@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.componentes;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 public class LogisticaClient {
 
@@ -33,6 +35,7 @@ public class LogisticaClient {
         } catch (HttpClientErrorException.NotFound e) {
             // Leemos el mensaje original ("No hay stock disponible...") que mandó Logística
             String mensajeDeLogistica = e.getResponseBodyAsString();
+            log.info(" Mensaje de logistica sobre asignacion de producto  {}", mensajeDeLogistica, e);
             throw new NoSuchElementException(mensajeDeLogistica);
 
         }catch (Exception e) {

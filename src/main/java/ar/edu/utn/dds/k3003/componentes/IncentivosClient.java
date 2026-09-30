@@ -2,12 +2,14 @@ package ar.edu.utn.dds.k3003.componentes;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 public class IncentivosClient {
 
@@ -39,6 +41,7 @@ public class IncentivosClient {
             String url = baseUrl + "/misiones/" + donadorId;
             return restTemplate.getForObject(url, MisionDTO.class);
         } catch (Exception e) {
+            log.error("Error al obtener la mision en curso del donador {}", donadorId, e);
             throw new RuntimeException("Error al consultar misiones en Incentivos", e);
         }
     }

@@ -7,6 +7,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.InsigniaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.incentivos.MisionDTO;
 import ar.edu.utn.dds.k3003.exceptions.ProductoNoEncontradoException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
+@Slf4j
 @Service
 public class DonacionesClient {
 
@@ -48,6 +50,7 @@ public class DonacionesClient {
             }
 
             // Si el body es genérico de Spring/Tomcat, fue un error de URL/Endpoint
+            log.error("Error de comunicación con Donaciones al consultar productoId {}", productoID, e);
             throw new RuntimeException("Error de configuración: La URL del endpoint de Donaciones no existe.", e);
 
         } catch (Exception e) {
