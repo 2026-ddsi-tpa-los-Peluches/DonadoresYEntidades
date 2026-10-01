@@ -382,7 +382,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
       Donador donadorClonado = donador.get();
       donadorClonado.aumentarQueja(1);
 
-      log.info("Agregando queja de donador: donadorID={} quejaID={}", queja.getId(),donadorId);
+      log.info("Agregando queja de donador: donadorID={} quejaID={}",donadorId,queja.getId());
 
       this.donadoresRepository.save(donadorClonado);
 
@@ -395,6 +395,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   @Override
   public List<NecesidadMaterialDTO> obtenerNecesidadesInsatisfechasDe(String productoSolicitado) {
+    log.info("Consulta de todas las Necesidades Insatisfechas de producto: producto={}",productoSolicitado);
     return necesidadesRepository.findAll().stream()
             .filter(
                     necesidad -> necesidad.esDelProducto(productoSolicitado) && !necesidad.estaSatisfecha())
@@ -403,12 +404,14 @@ public class Fachada implements FachadaDonadoresYEntidades {
   }
 
   public List<DonadorDTO> obtenerDonadores() {
+    log.info("Consulta de Donadores registrados: cantidad={}",donadoresRepository.count());
     return this.donadoresRepository.findAll().stream()
             .map(donadoresYEntidadesDataMapper::toDonadorDTO)
             .toList();
   }
 
   public List<EntidadBeneficaDTO> obtenerEntidades() {
+    log.info("Consulta de Entidades registradas: cantidad={}",entidadesRepository.count());
     return this.entidadesRepository.findAll().stream()
             .map(donadoresYEntidadesDataMapper::toEntidadBeneficaDTO)
             .toList();
@@ -417,6 +420,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
   public NecesidadMaterialDTO buscarNecesidadPorID(Integer id) {
     NecesidadMaterial necesidad = this.necesidadesRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("No existe una necesidad con ID: " + id));
+    log.info("Consulta de Necesidad por ID realizado con exito: necesidadID={}",id);
     return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidad);
   }
 
