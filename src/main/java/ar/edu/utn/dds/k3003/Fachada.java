@@ -346,11 +346,11 @@ public class Fachada implements FachadaDonadoresYEntidades {
     int asignada = (cantidadAsignada != null) ? cantidadAsignada : 0;
 
     if (asignada > 0) {
-      necesidadGuardada.satisfacer(asignada);
-      val necesidadActualizada = this.necesidadesRepository.save(necesidadGuardada);
-      log.info("Satisfaciendo necesidad ya existente: necesidadID={}, necesidadAsignada={}", necesidad.getId(),asignada);
-      log.info("Necesidad satisfecha y actualizada: necesidadID={}, cantidad={} ", necesidad.getId(),necesidadActualizada.cantidadRecibida);
-      return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadActualizada);
+//      necesidadGuardada.satisfacer(asignada);
+//      val necesidadActualizada = this.necesidadesRepository.save(necesidadGuardada);
+//      log.info("Satisfaciendo necesidad ya existente: necesidadID={}, necesidadAsignada={}", necesidadGuardada.getId(),asignada);
+      log.info("Necesidad creada y asignada: necesidadID={}, cantidad={} ", necesidadGuardada.getId(),necesidadGuardada.cantidadRecibida);
+      return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);
     }
 
     return DTOConID;
