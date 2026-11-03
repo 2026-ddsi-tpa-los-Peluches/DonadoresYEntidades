@@ -5,10 +5,14 @@ import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.componentes.DonacionesClient;
 import ar.edu.utn.dds.k3003.componentes.IncentivosClient;
 import ar.edu.utn.dds.k3003.componentes.LogisticaClient;
+import ar.edu.utn.dds.k3003.events.DonadorCategoriaActualizadaEvent;
 import ar.edu.utn.dds.k3003.exceptions.*;
 import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
+import ar.edu.utn.dds.k3003.publisher.DonadorCategoriaPublisher;
 import ar.edu.utn.dds.k3003.repositories.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -55,8 +59,16 @@ public class Fachada implements FachadaDonadoresYEntidades {
   private DonadoresYEntidadesDataMapper donadoresYEntidadesDataMapper =
           new DonadoresYEntidadesDataMapper();
 
+
+
+  //Publishers
+
+  private final DonadorCategoriaPublisher categoriaPublisher;
+
+
   @Autowired
-  public Fachada(MeterRegistry meterRegistry) {
+  public Fachada(MeterRegistry meterRegistry,
+                 DonadorCategoriaPublisher categoriaPublisher) {
     this.quejasRegistradasCounter = Counter.builder("quejas.registradas")
             .description("Quejas realizadas")
             .register(meterRegistry);
@@ -76,6 +88,9 @@ public class Fachada implements FachadaDonadoresYEntidades {
     this.necesidadesRegistradasCounter = Counter.builder("necesidades.registradas")
             .description("Cantidad total de necesidades registradas")
             .register(meterRegistry);
+
+    //PUBLISHERS
+    this.categoriaPublisher = categoriaPublisher;
   }
 
   public DonadorDTO asignarMision(Integer donadorId, String misionActualID) {
@@ -209,6 +224,16 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     this.donadoresRepository.save(donadorFinal);
 
+    // mando mensaje de actualizacion de categoria al conejo
+
+    DonadorCategoriaActualizadaEvent evento = new DonadorCategoriaActualizadaEvent(
+            donadorID.toString(), // o Integer según cómo lo tipes en tu evento
+            categoria,
+            LocalDateTime.now()
+    );
+
+    categoriaPublisher.notificarCambioCategoria(donadorID, categoria);
+
     log.info("Modificar categoria a donador: donadorID={}, categoria={}", donadorID,categoria);
 
     return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
@@ -247,6 +272,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     necesidad.satisfacer(cantidad);
     this.necesidadesRepository.save(necesidad);
+
 
     log.info("satisfacer necesidad con cantidad: necesidadID={}, cantidad={}", necesidadID,cantidad);
 

@@ -57,6 +57,18 @@
     </dependency>
 
 
+    <!-- Rabbit Para Servicio De Consultas -->
+    <dependency>
+      <groupId>com.rabbitmq</groupId>
+      <artifactId>amqp-client</artifactId>
+      <version>5.20.0</version>
+    </dependency>
+
+    <!--El conejo social -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-amqp</artifactId>
+    </dependency>
 
     <!-- Existing Dependencies -->
     <dependency>
