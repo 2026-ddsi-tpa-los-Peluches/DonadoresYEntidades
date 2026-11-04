@@ -9,7 +9,8 @@ import ar.edu.utn.dds.k3003.events.DonadorCategoriaActualizadaEvent;
 import ar.edu.utn.dds.k3003.exceptions.*;
 import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
-import ar.edu.utn.dds.k3003.publisher.DonadorCategoriaPublisher;
+import ar.edu.utn.dds.k3003.model.Queja;
+import ar.edu.utn.dds.k3003.publisher.DonadoresPublisher;
 import ar.edu.utn.dds.k3003.repositories.*;
 
 import java.time.LocalDateTime;
@@ -63,12 +64,12 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   //Publishers
 
-  private final DonadorCategoriaPublisher categoriaPublisher;
+  private final DonadoresPublisher donadoresPublisher;
 
 
   @Autowired
   public Fachada(MeterRegistry meterRegistry,
-                 DonadorCategoriaPublisher categoriaPublisher) {
+                 DonadoresPublisher donadoresPublisher) {
     this.quejasRegistradasCounter = Counter.builder("quejas.registradas")
             .description("Quejas realizadas")
             .register(meterRegistry);
@@ -90,7 +91,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
             .register(meterRegistry);
 
     //PUBLISHERS
-    this.categoriaPublisher = categoriaPublisher;
+    this.donadoresPublisher = donadoresPublisher;
   }
 
   public DonadorDTO asignarMision(Integer donadorId, String misionActualID) {
@@ -232,7 +233,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
             LocalDateTime.now()
     );
 
-    categoriaPublisher.notificarCambioCategoria(donadorID, categoria);
+    // llamo al conejo de pascuas
+    donadoresPublisher.notificarCambioCategoria(donadorID, categoria);
 
     log.info("Modificar categoria a donador: donadorID={}, categoria={}", donadorID,categoria);
 
@@ -399,8 +401,12 @@ public class Fachada implements FachadaDonadoresYEntidades {
       if (donador.isEmpty()) {
         throw new NoSuchElementException("No existe un donador con ID " + donadorId);
       }
-      val queja = donadoresYEntidadesDataMapper.toQueja(quejaDTO);
-      val quejaGuardada = this.quejaRepository.save(queja);
+      Queja queja = donadoresYEntidadesDataMapper.toQueja(quejaDTO);
+      Queja quejaGuardada = this.quejaRepository.save(queja);
+
+
+      // envio queja al conejo mensajero
+      donadoresPublisher.notificarQuejaRegistrada(quejaGuardada);
 
       this.quejasRegistradasCounter.increment();
 
