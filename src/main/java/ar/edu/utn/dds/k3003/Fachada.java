@@ -1,5 +1,6 @@
 package ar.edu.utn.dds.k3003;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.componentes.DonacionesClient;
@@ -110,49 +111,56 @@ public class Fachada implements FachadaDonadoresYEntidades {
     return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
   }
 
-  @Override
-  public DonadorDTO agregarDonador(DonadorDTO donadorDTO) {
-    if (donadorDTO.id() != null) {
-      throw new IllegalArgumentException("No debe enviarse ID para crear un donador");
+    @Override
+    public DonadorDTO agregarDonador(DonadorDTO donadorDTO) {
+      if (donadorDTO.id() != null) {
+        throw new IllegalArgumentException("No debe enviarse ID para crear un donador");
+      }
+
+
+
+      val donador = donadoresYEntidadesDataMapper.toDonador(donadorDTO);
+      val donadorGuardado = this.donadoresRepository.save(donador);
+
+
+      //le aviso al conejo
+      donadoresPublisher.notificarDonadorCreado(donador);
+
+
+      // Incrementar métrica
+      log.info("Donador creado {}", donador.getId());
+      this.donadoresCreadosCounter.increment();
+
+      return donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
     }
 
-    val donador = donadoresYEntidadesDataMapper.toDonador(donadorDTO);
-    val donadorGuardado = this.donadoresRepository.save(donador);
+    public DonadorDTO agregarInsignia(Integer idDonador, String insigniaID) {
+      if (idDonador == null) {
+        throw new IllegalArgumentException("No debe enviarse ID para crear un donador");
+      }
+      var donador = this.donadoresRepository.findById(idDonador)
+              .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + idDonador));
 
-    // Incrementar métrica
-    log.info("Donador creado {}", donador.getId());
-    this.donadoresCreadosCounter.increment();
+      donador.agregarInsignia(insigniaID);
 
-    return donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
-  }
-
-  public DonadorDTO agregarInsignia(Integer idDonador, String insigniaID) {
-    if (idDonador == null) {
-      throw new IllegalArgumentException("No debe enviarse ID para crear un donador");
+      var donadorGuardado = this.donadoresRepository.save(donador);
+      log.info("Seteando la insignia a donador: donadorID={}, insigniaID={}", idDonador,insigniaID);
+      return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
     }
-    var donador = this.donadoresRepository.findById(idDonador)
-            .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + idDonador));
 
-    donador.agregarInsignia(insigniaID);
+    public DonadorDTO quitarInsignia(Integer idDonador, String insigniaID) {
+      if (idDonador == null) {
+        throw new IllegalArgumentException("El ID del donador es obligatorio");
+      }
+      var donador = this.donadoresRepository.findById(idDonador)
+              .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + idDonador));
 
-    var donadorGuardado = this.donadoresRepository.save(donador);
-    log.info("Seteando la insignia a donador: donadorID={}, insigniaID={}", idDonador,insigniaID);
-    return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
-  }
+      donador.quitarInsignia(insigniaID);
 
-  public DonadorDTO quitarInsignia(Integer idDonador, String insigniaID) {
-    if (idDonador == null) {
-      throw new IllegalArgumentException("El ID del donador es obligatorio");
+      var donadorGuardado = this.donadoresRepository.save(donador);
+      log.info("Quitar la insignia a donador: donadorID={}, insigniaID={}", idDonador,insigniaID);
+      return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
     }
-    var donador = this.donadoresRepository.findById(idDonador)
-            .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + idDonador));
-
-    donador.quitarInsignia(insigniaID);
-
-    var donadorGuardado = this.donadoresRepository.save(donador);
-    log.info("Quitar la insignia a donador: donadorID={}, insigniaID={}", idDonador,insigniaID);
-    return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
-  }
 
   @Override
   public DonadorDTO buscarDonadorPorID(Integer donadorID) throws NoSuchElementException {

@@ -2,7 +2,9 @@ package ar.edu.utn.dds.k3003.publisher;
 
 
 import ar.edu.utn.dds.k3003.events.DonadorCategoriaActualizadaEvent;
+import ar.edu.utn.dds.k3003.events.DonadorCreadoEvent;
 import ar.edu.utn.dds.k3003.events.QuejaDonadorRegistradaEvent;
+import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.Queja;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
@@ -50,5 +52,22 @@ public class DonadoresPublisher {
         System.out.println("Queja enviada a RabbitMQ para el donador ID: " + queja.getDonacionId());
 
 
+    }
+
+    public void notificarDonadorCreado(Donador donador) {
+        DonadorCreadoEvent evento = new DonadorCreadoEvent(
+                donador.getId(),
+                donador.getNombre(),
+                donador.getApellido(),
+                donador.getEdad(),
+                donador.getEmail(),
+                donador.getNroDocumento(),
+                donador.getDomicilio(),
+                donador.getEstado() != null ? donador.getEstado().name() : null,
+                donador.getCategoria()
+        );
+
+        eventPublisher.publicar("donador-creado-exchange", evento);
+        System.out.println(" [x] Donador creado enviado a RabbitMQ con ID: " + donador.getId());
     }
 }
