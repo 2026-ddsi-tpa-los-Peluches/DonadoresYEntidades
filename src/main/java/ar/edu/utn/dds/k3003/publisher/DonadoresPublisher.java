@@ -1,14 +1,13 @@
 package ar.edu.utn.dds.k3003.publisher;
 
 
-import ar.edu.utn.dds.k3003.events.DonadorCategoriaActualizadaEvent;
-import ar.edu.utn.dds.k3003.events.DonadorCreadoEvent;
-import ar.edu.utn.dds.k3003.events.QuejaDonadorRegistradaEvent;
+import ar.edu.utn.dds.k3003.events.*;
 import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.Queja;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Component
@@ -33,7 +32,7 @@ public class DonadoresPublisher {
         );
 
         // Publicamos utilizando tu eventPublisher hacia el exchange / routing key correspondiente
-        eventPublisher.publicar("donador-categoria-exchange", evento); // Reemplazá por tu exchange/routing key
+        eventPublisher.publicar("donador-categoria", evento); // Reemplazá por tu exchange/routing key
 
         System.out.println("Categoría actualizada enviada a RabbitMQ para el donador ID: " + donadorId);
     }
@@ -47,7 +46,7 @@ public class DonadoresPublisher {
                 queja.getFecha()
         );
 
-        eventPublisher.publicar("donador-queja-registrada-exchange", evento);
+        eventPublisher.publicar("donador-queja-registrada", evento);
 
         System.out.println("Queja enviada a RabbitMQ para el donador ID: " + queja.getDonacionId());
 
@@ -67,7 +66,28 @@ public class DonadoresPublisher {
                 donador.getCategoria()
         );
 
-        eventPublisher.publicar("donador-creado-exchange", evento);
+        eventPublisher.publicar("donador-creado", evento);
         System.out.println(" [x] Donador creado enviado a RabbitMQ con ID: " + donador.getId());
+    }
+
+    public void notificarEstadoDonador(Donador donador) {
+        DonadorEstadoActualizadoEvent evento = new DonadorEstadoActualizadoEvent(
+                donador.getId().toString(),
+                donador.getEstado(),
+                Instant.now()
+        );
+
+        eventPublisher.publicar("donador-estado", evento);
+        System.out.println(" [x] Donador creado enviado a RabbitMQ con ID: " + donador.getId());
+    }
+
+    public void notificarSetMisionDonador(Donador donador) {
+        DonadorMisionEvent evento = new DonadorMisionEvent(
+                donador.getId().toString(),
+                donador.getMisionActualID()
+        );
+
+        eventPublisher.publicar("donador-set-mision", evento);
+        System.out.println(" [x] Set Mision Donador Id : " + donador.getId());
     }
 }
