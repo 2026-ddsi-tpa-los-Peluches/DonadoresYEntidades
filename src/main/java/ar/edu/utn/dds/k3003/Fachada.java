@@ -12,6 +12,7 @@ import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
 import ar.edu.utn.dds.k3003.model.Queja;
 import ar.edu.utn.dds.k3003.publisher.DonadoresPublisher;
+import ar.edu.utn.dds.k3003.publisher.NecesidadesPublisher;
 import ar.edu.utn.dds.k3003.repositories.*;
 
 import java.time.LocalDateTime;
@@ -66,11 +67,13 @@ public class Fachada implements FachadaDonadoresYEntidades {
   //Publishers
 
   private final DonadoresPublisher donadoresPublisher;
+  private final NecesidadesPublisher necesidadesPublisher;
 
 
   @Autowired
   public Fachada(MeterRegistry meterRegistry,
-                 DonadoresPublisher donadoresPublisher) {
+                 DonadoresPublisher donadoresPublisher,
+                 NecesidadesPublisher necesidadesPublisher) {
     this.quejasRegistradasCounter = Counter.builder("quejas.registradas")
             .description("Quejas realizadas")
             .register(meterRegistry);
@@ -93,6 +96,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     //PUBLISHERS
     this.donadoresPublisher = donadoresPublisher;
+    this.necesidadesPublisher = necesidadesPublisher;
   }
 
   public DonadorDTO asignarMision(Integer donadorId, String misionActualID) {
@@ -191,6 +195,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     this.donadoresRepository.save(donadorFinal);
 
+
+
     log.info("Modificando estado a donador: donadorID={}, estado={}", donadorID,estado);
 
     return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
@@ -282,6 +288,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     necesidad.satisfacer(cantidad);
     this.necesidadesRepository.save(necesidad);
+
+
+    // aviso al orejon
+    necesidadesPublisher.notificarCantidadRecibida(necesidadID, cantidad);
 
 
     log.info("satisfacer necesidad con cantidad: necesidadID={}, cantidad={}", necesidadID,cantidad);
