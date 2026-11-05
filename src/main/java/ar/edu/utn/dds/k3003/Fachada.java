@@ -108,6 +108,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     var donadorGuardado = this.donadoresRepository.save(donador);
     log.info("Seteando la mision a donador: donadorID={}, misionActualID={}", donadorId,misionActualID);
+    donadoresPublisher.notificarSetMisionDonador(donador);
+
     return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
   }
 
@@ -192,6 +194,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
     this.donadoresRepository.save(donadorFinal);
 
     log.info("Modificando estado a donador: donadorID={}, estado={}", donadorID,estado);
+
+    donadoresPublisher.notificarEstadoDonador(donadorFinal);
 
     return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
   }
