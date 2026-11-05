@@ -1,6 +1,8 @@
 package ar.edu.utn.dds.k3003;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.componentes.DonacionesClient;
@@ -378,6 +380,14 @@ public class Fachada implements FachadaDonadoresYEntidades {
     val necesidad = donadoresYEntidadesDataMapper.toNecesidadMaterial(necesidadMaterialDTO);
     necesidad.setEntidadBenefica(entidadBenefica);
     val necesidadGuardada = this.necesidadesRepository.save(necesidad);
+
+    ProductoDTO productoDTO =  donacionesClient.obtenerProductoPorId(necesidad.getProductoSolicitadoID());
+
+    CategoriaDTO categoriaDTO = donacionesClient.obtenerCategoriaPorId(productoDTO.categoriaID());
+
+    necesidadesPublisher.notificarNecesidadCreada(necesidadGuardada, necesidadMaterialDTO, productoDTO, categoriaDTO);
+
+
     log.info("Agregando necesidad: necesidadID={}", necesidad.getId());
 
     // Incrementar métrica
@@ -398,6 +408,9 @@ public class Fachada implements FachadaDonadoresYEntidades {
     if (asignada > 0) {
       necesidadGuardada.satisfacer(asignada);
       val necesidadActualizada = this.necesidadesRepository.save(necesidadGuardada);
+
+      necesidadesPublisher.notificarCantidadRecibida(necesidadActualizada.getId(), asignada);
+
       log.info("cantidad asignada a la necesidad y actualizada: necesidadID={}, cantidad={} ", necesidad.getId(),necesidadActualizada.cantidadRecibida);
       return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadActualizada);
     }
@@ -482,6 +495,9 @@ public class Fachada implements FachadaDonadoresYEntidades {
       throw new NoSuchElementException("No existe una necesidad con ID: " + id);
     }
     this.necesidadesRepository.deleteById(id);
+
+    necesidadesPublisher.notificarNecesidadEliminada(id);
+
     log.info("Borrando necesidad: necesidadID={}", id);
   }
 
@@ -497,6 +513,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
     }
 
     NecesidadMaterial necesidadGuardada = this.necesidadesRepository.save(necesidad);
+
+    necesidadesPublisher.notificarNecesidadActualizada(necesidadGuardada);
 
     log.info("Editando necesidad: necesidadID={}, necesidadMaterialAmodificar={}", necesidad.getId(),dto);
     return donadoresYEntidadesDataMapper.toNecesidadMaterialDTO(necesidadGuardada);

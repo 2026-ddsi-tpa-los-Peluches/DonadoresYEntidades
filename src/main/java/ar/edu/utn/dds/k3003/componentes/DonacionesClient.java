@@ -1,6 +1,7 @@
 package ar.edu.utn.dds.k3003.componentes;
 
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
@@ -54,6 +55,39 @@ public class DonacionesClient {
             throw new RuntimeException("Error de configuración: La URL del endpoint de Donaciones no existe.", e);
 
         } catch (Exception e) {
+            throw new RuntimeException("Error al comunicarse con el servicio de Donaciones: " + e.getMessage(), e);
+        }
+    }
+
+
+    public ProductoDTO obtenerProductoPorId(String productoID) {
+        try {
+            String url = baseUrl + "/productos/" + productoID;
+            // Hacemos el GET esperando un ProductoDTO
+            return restTemplate.getForObject(url, ProductoDTO.class);
+
+        } catch (HttpClientErrorException.NotFound e) {
+            log.warn("Producto con ID {} no encontrado en el servicio de Donaciones", productoID);
+            throw new NoSuchElementException("No se encontró el producto con ID: " + productoID);
+
+        } catch (Exception e) {
+            log.error("Error de comunicación con Donaciones al obtener el productoId {}", productoID, e);
+            throw new RuntimeException("Error al comunicarse con el servicio de Donaciones: " + e.getMessage(), e);
+        }
+    }
+
+    public CategoriaDTO obtenerCategoriaPorId(String categoriaID) {
+        try {
+            String url = baseUrl + "/categorias/" + categoriaID;
+            // Hacemos el GET esperando un CategoriaDTO
+            return restTemplate.getForObject(url, CategoriaDTO.class);
+
+        } catch (HttpClientErrorException.NotFound e) {
+            log.warn("Categoría con ID {} no encontrada en el servicio de Donaciones", categoriaID);
+            throw new NoSuchElementException("No se encontró la categoría con ID: " + categoriaID);
+
+        } catch (Exception e) {
+            log.error("Error de comunicación con Donaciones al obtener la categoriaId {}", categoriaID, e);
             throw new RuntimeException("Error al comunicarse con el servicio de Donaciones: " + e.getMessage(), e);
         }
     }
