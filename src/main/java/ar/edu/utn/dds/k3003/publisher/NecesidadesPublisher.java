@@ -9,7 +9,9 @@ import ar.edu.utn.dds.k3003.events.NecesidadCreadaEvent;
 import ar.edu.utn.dds.k3003.events.NecesidadEliminadaEvent;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NecesidadesPublisher {
 
     private final EventPublisher eventPublisher;
