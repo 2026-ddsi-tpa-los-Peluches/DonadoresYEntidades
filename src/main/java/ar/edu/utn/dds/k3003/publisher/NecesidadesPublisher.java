@@ -3,12 +3,11 @@ package ar.edu.utn.dds.k3003.publisher;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.NecesidadMaterialDTO;
-import ar.edu.utn.dds.k3003.events.CantidadRecibidaActualizadaEvent;
-import ar.edu.utn.dds.k3003.events.NecesidadActualizadaEvent;
-import ar.edu.utn.dds.k3003.events.NecesidadCreadaEvent;
-import ar.edu.utn.dds.k3003.events.NecesidadEliminadaEvent;
+import ar.edu.utn.dds.k3003.events.necesidadEvents.CantidadRecibidaActualizadaEvent;
+import ar.edu.utn.dds.k3003.events.necesidadEvents.NecesidadActualizadaEvent;
+import ar.edu.utn.dds.k3003.events.necesidadEvents.NecesidadCreadaEvent;
+import ar.edu.utn.dds.k3003.events.necesidadEvents.NecesidadEliminadaEvent;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 @Component

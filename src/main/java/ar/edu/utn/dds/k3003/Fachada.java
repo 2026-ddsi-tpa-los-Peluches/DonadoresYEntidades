@@ -1,19 +1,19 @@
 package ar.edu.utn.dds.k3003;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
-import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.*;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.componentes.DonacionesClient;
 import ar.edu.utn.dds.k3003.componentes.IncentivosClient;
 import ar.edu.utn.dds.k3003.componentes.LogisticaClient;
-import ar.edu.utn.dds.k3003.events.DonadorCategoriaActualizadaEvent;
+import ar.edu.utn.dds.k3003.events.donadorEvents.DonadorCategoriaActualizadaEvent;
 import ar.edu.utn.dds.k3003.exceptions.*;
 import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.NecesidadMaterial;
 import ar.edu.utn.dds.k3003.model.Queja;
 import ar.edu.utn.dds.k3003.publisher.DonadoresPublisher;
+import ar.edu.utn.dds.k3003.publisher.EntidadBeneficaPublisher;
 import ar.edu.utn.dds.k3003.publisher.NecesidadesPublisher;
 import ar.edu.utn.dds.k3003.repositories.*;
 
@@ -54,6 +54,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
   @Autowired
   private LogisticaClient logisticaClient;
 
+
+
   // Métricas personalizadas
   private final Counter quejasRegistradasCounter;
   private final Counter erroresNegocioCounter;
@@ -70,12 +72,14 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
   private final DonadoresPublisher donadoresPublisher;
   private final NecesidadesPublisher necesidadesPublisher;
+  private EntidadBeneficaPublisher entidadBeneficaPublisher;
 
 
   @Autowired
   public Fachada(MeterRegistry meterRegistry,
                  DonadoresPublisher donadoresPublisher,
-                 NecesidadesPublisher necesidadesPublisher) {
+                 NecesidadesPublisher necesidadesPublisher,
+                 EntidadBeneficaPublisher entidadBeneficaPublisher) {
     this.quejasRegistradasCounter = Counter.builder("quejas.registradas")
             .description("Quejas realizadas")
             .register(meterRegistry);
@@ -99,6 +103,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
     //PUBLISHERS
     this.donadoresPublisher = donadoresPublisher;
     this.necesidadesPublisher = necesidadesPublisher;
+    this.entidadBeneficaPublisher = entidadBeneficaPublisher;
   }
 
   public DonadorDTO asignarMision(Integer donadorId, String misionActualID) {
@@ -226,6 +231,9 @@ public class Fachada implements FachadaDonadoresYEntidades {
     }
 
     var entidadGuardada = this.entidadesRepository.save(entidad);
+
+    entidadBeneficaPublisher.notificarEntidadActualizada(id, dto);
+
     log.info("Modificando entidad: entidadID={}, nuevaEntidad={}", id,dto);
     return donadoresYEntidadesDataMapper.toEntidadBeneficaDTO(entidadGuardada);
   }
@@ -333,6 +341,8 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     val entidad = donadoresYEntidadesDataMapper.toEntidadBenefica(entidadBeneficaDTO);
     val entidadGuardada = this.entidadesRepository.save(entidad);
+
+    entidadBeneficaPublisher.notificarEntidadCreada(entidadBeneficaDTO);
 
     // Incrementar métrica
     this.entidadesCreadasCounter.increment();

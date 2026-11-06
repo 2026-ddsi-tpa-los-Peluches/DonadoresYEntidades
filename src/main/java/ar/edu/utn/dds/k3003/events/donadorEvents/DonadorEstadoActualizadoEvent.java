@@ -1,4 +1,4 @@
-package ar.edu.utn.dds.k3003.events;
+package ar.edu.utn.dds.k3003.events.donadorEvents;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.EstadoDonadorEnum;
 import lombok.Getter;

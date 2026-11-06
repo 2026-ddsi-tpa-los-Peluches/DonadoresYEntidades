@@ -1,7 +1,7 @@
 package ar.edu.utn.dds.k3003.publisher;
 
 
-import ar.edu.utn.dds.k3003.events.*;
+import ar.edu.utn.dds.k3003.events.donadorEvents.*;
 import ar.edu.utn.dds.k3003.model.Donador;
 import ar.edu.utn.dds.k3003.model.Queja;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
