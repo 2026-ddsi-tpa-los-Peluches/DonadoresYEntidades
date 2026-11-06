@@ -342,7 +342,7 @@ public class Fachada implements FachadaDonadoresYEntidades {
     val entidad = donadoresYEntidadesDataMapper.toEntidadBenefica(entidadBeneficaDTO);
     val entidadGuardada = this.entidadesRepository.save(entidad);
 
-    entidadBeneficaPublisher.notificarEntidadCreada(entidadBeneficaDTO);
+    entidadBeneficaPublisher.notificarEntidadCreada(entidadGuardada.getId() ,entidadBeneficaDTO);
 
     // Incrementar métrica
     this.entidadesCreadasCounter.increment();

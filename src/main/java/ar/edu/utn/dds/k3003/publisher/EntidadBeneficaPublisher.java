@@ -16,9 +16,9 @@ public class EntidadBeneficaPublisher {
         this.eventPublisher = eventPublisher;
     }
 
-    public void notificarEntidadCreada(EntidadBeneficaDTO entidadDTO) {
+    public void notificarEntidadCreada(Integer id, EntidadBeneficaDTO entidadDTO) {
         EntidadBeneficaCreadaEvent evento = new EntidadBeneficaCreadaEvent(
-                entidadDTO.id(),
+                id,
                 entidadDTO.razonSocial(),
                 entidadDTO.domicilio(),
                 entidadDTO.telefono(),
