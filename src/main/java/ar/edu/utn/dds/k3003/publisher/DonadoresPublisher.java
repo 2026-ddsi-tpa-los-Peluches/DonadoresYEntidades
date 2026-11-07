@@ -77,6 +77,13 @@ public class DonadoresPublisher {
         System.out.println(" [x] Donador creado enviado a RabbitMQ con ID: " + donador.getId());
     }
 
+    public void notificarInsigniaQuitada(Integer donadorId, String insigniaId) {
+        DonadorInsigniaQuitadaEvent evento = new DonadorInsigniaQuitadaEvent(String.valueOf(donadorId), insigniaId);
+
+        eventPublisher.publicar("insignia-donador-quitada", evento);
+        System.out.println(" [x] Insignia " + insigniaId + " quitada enviada a RabbitMQ para el donador ID: " + donadorId);
+    }
+
     public void notificarSetMisionDonador(Donador donador) {
         DonadorMisionEvent evento = new DonadorMisionEvent(
                 donador.getId().toString(),

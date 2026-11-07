@@ -113,10 +113,9 @@ public class Donador {
     }
   }
 
-  public void quitarInsignia(String insigniaID) {
-    if (this.insigniasID != null) {
-      this.insigniasID.remove(insigniaID);
-    }
+  // Devuelve true si la insignia estaba asignada y se quitó, false si no la tenía.
+  public boolean quitarInsignia(String insigniaID) {
+    return this.insigniasID != null && this.insigniasID.remove(insigniaID);
   }
 
   private void agregarEstadoHistorial() {

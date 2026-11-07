@@ -11,7 +11,8 @@ public class ExcepcionHandler {
   @ExceptionHandler({
     DonadorNoEncontradoException.class,
     EntidadNoEncontradaException.class,
-    NecesidadNoEncontradaException.class
+    NecesidadNoEncontradaException.class,
+    InsigniaNoAsignadaException.class
   })
   public ResponseEntity<String> handleException(RuntimeException e) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

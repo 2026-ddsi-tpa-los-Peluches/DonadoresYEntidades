@@ -168,10 +168,16 @@ public class Fachada implements FachadaDonadoresYEntidades {
       var donador = this.donadoresRepository.findById(idDonador)
               .orElseThrow(() -> new NoSuchElementException("Donador no encontrado con ID: " + idDonador));
 
-      donador.quitarInsignia(insigniaID);
+      if (!donador.quitarInsignia(insigniaID)) {
+        throw new InsigniaNoAsignadaException(
+                "El donador " + idDonador + " no tiene asignada la insignia " + insigniaID);
+      }
 
       var donadorGuardado = this.donadoresRepository.save(donador);
       log.info("Quitar la insignia a donador: donadorID={}, insigniaID={}", idDonador,insigniaID);
+
+      // Avisamos a Consultas para que también la saque de su read model.
+      donadoresPublisher.notificarInsigniaQuitada(idDonador, insigniaID);
       return this.donadoresYEntidadesDataMapper.toDonadorDTO(donadorGuardado);
     }
 
