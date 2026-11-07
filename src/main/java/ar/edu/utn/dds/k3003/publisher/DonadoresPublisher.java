@@ -23,17 +23,13 @@ public class DonadoresPublisher {
     }
 
     public void notificarCambioCategoria(Integer donadorId, String nuevaCategoria) {
-
-        // Creamos el evento con los datos necesarios y el timestamp actual
         DonadorCategoriaActualizadaEvent evento = new DonadorCategoriaActualizadaEvent(
                 String.valueOf(donadorId),
                 nuevaCategoria,
-                LocalDateTime.now()
+                Instant.now() // Usamos Instant para evitar choques de tipos con Mongo
         );
 
-        // Publicamos utilizando tu eventPublisher hacia el exchange / routing key correspondiente
-        eventPublisher.publicar("donador-categoria", evento); // Reemplazá por tu exchange/routing key
-
+        eventPublisher.publicar("donador-categoria", evento);
         System.out.println("Categoría actualizada enviada a RabbitMQ para el donador ID: " + donadorId);
     }
 
