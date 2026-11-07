@@ -238,6 +238,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
     return donadoresYEntidadesDataMapper.toEntidadBeneficaDTO(entidadGuardada);
   }
 
+
+
+
+
   @Override
   public DonadorDTO modificarCategoria(Integer donadorID, String categoria)
           throws NoSuchElementException {
@@ -253,21 +257,17 @@ public class Fachada implements FachadaDonadoresYEntidades {
 
     this.donadoresRepository.save(donadorFinal);
 
-    // mando mensaje de actualizacion de categoria al conejo
-
-    DonadorCategoriaActualizadaEvent evento = new DonadorCategoriaActualizadaEvent(
-            donadorID.toString(), // o Integer según cómo lo tipes en tu evento
-            categoria,
-            LocalDateTime.now()
-    );
-
-    // llamo al conejo de pascuas
+    // Llamamos al publisher pasando el Instant actual
     donadoresPublisher.notificarCambioCategoria(donadorID, categoria);
 
-    log.info("Modificar categoria a donador: donadorID={}, categoria={}", donadorID,categoria);
+    log.info("Modificar categoria a donador: donadorID={}, categoria={}", donadorID, categoria);
 
     return donadoresYEntidadesDataMapper.toDonadorDTO(donadorFinal);
   }
+
+
+
+
 
   @Override
   public Boolean puedeDonar(Integer donadorID) throws NoSuchElementException {
