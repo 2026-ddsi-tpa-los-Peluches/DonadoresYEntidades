@@ -39,7 +39,7 @@ public class LogisticaClient {
             throw new NoSuchElementException(mensajeDeLogistica);
 
         }catch (Exception e) {
-            throw new RuntimeException("Error de comunicación al gestionar la donación en Logística", e);
+            throw new RuntimeException("Error de comunicación al asignar stock para la necesidad en Logística", e);
         }
     }
 }

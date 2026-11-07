@@ -409,7 +409,10 @@ public class Fachada implements FachadaDonadoresYEntidades {
     Integer cantidadAsignada = 0;
     try {
       cantidadAsignada = logisticaClient.asignarProductoAEntidad(DTOConID);
-    } catch (NoSuchElementException e) {
+    } catch (Exception e) {
+      // La necesidad ya quedo creada y persistida arriba: la asignacion de stock es best-effort,
+      // una falla de Logistica (sin stock, timeout, error del servicio) no debe tumbar la respuesta.
+      log.warn("No se pudo asignar stock a la necesidad {} contra Logistica: {}", necesidad.getId(), e.getMessage());
       cantidadAsignada = 0;
     }
 
